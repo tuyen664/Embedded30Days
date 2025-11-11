@@ -1,10 +1,10 @@
 ## Mục tiêu bài học
 
-Cấu hình PA1 làm ** nút nhấn ** , biết cách ** chống dội ** khi nhấn nút 
+Cấu hình PA1 làm  **nút nhấn**  , biết cách **chống dội** khi nhấn nút 
 
 ## Phần cứng sử dụng
 **STM32F103
-** Nút nhấn đấu PA1
+**Nút nhấn đấu PA1
 
 
 ## Giải thích code hoạt động
@@ -12,7 +12,7 @@ Cấu hình PA1 làm ** nút nhấn ** , biết cách ** chống dội ** khi nh
 
 - Cấu hình PC13 là chân nháy led , output push-pull 50MHz
 
-- Cấu hình PA1 là **Input Pull-up** : PA1 được dùng làm ngõ vào và được kéo lên
+- Cấu hình PA1 là  **Input Pull-up** : PA1 được dùng làm ngõ vào và được kéo lên
 mức **logic cao (1)** bên trong vi điều khiển bằng điện trở nội bộ
 -> khi nhấn nút : 1->0 (PA1 nối lên 3.3V qua pull-up), thả tay : 0->1 (PA1 
 nối xuống đất)
@@ -21,7 +21,7 @@ PA1 bị nhiễu , dao động ngẫu nhiên giữa 0 và 1 -> vi điều khiể
 Nên dùng pull-down hoặc pull-up.
 - Cấu hình SysTick cứ 1ms là kích hoạt COUNTFLAG 
 
-2. ** Hoạt động hàm chính**
+2.  **Hoạt động hàm chính**
  - Khởi tạo : 
       GPIO_Config();
       GPIO_ResetBits(GPIOC, GPIO_Pin_13);  // LED sáng (active low)
@@ -36,7 +36,7 @@ Nên dùng pull-down hoặc pull-up.
 
  - check lại xem nút có đúng đang nhấn không : 
 if (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1))
--> → Đảm bảo nút thực sự đang được nhấn, không phải nhiễu.
+→ Đảm bảo nút thực sự đang được nhấn, không phải nhiễu.
 
 - Đợi cho đến khi nút được nhả ra : 0-> 1
  while (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1));
