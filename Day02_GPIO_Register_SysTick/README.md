@@ -21,11 +21,11 @@ Nếu bit đó = 0 → chân xuất ra mức LOW (0V) -> led sáng
 
 - cấu hình SysTick chạy mỗi 1ms kích hoạt cờ count , giảm 1ms (giảm biến u32Delay)
 
-SysTick->LOAD = 72 * 1000 - 1; // đếm 71999 -> 0 (24bit)
-Hệ thống chạy ở 72MHz (1s chạy 72.10^6 xung clock)-> chạy chu kì 72000 xung clock là 1ms
+  SysTick->LOAD = 72 * 1000 - 1; // đếm 71999 -> 0 (24bit)
+  Hệ thống chạy ở 72MHz (1s chạy 72.10^6 xung clock)-> chạy chu kì 72000 xung clock là 1ms
 
-SysTick->VAL=0U; // Val là biến đếm đang chạy nó chạy từ Load-> 0 , đến 0 thì bật COUNTFLAG
- Và reset lại 
+  SysTick->VAL=0U; // Val là biến đếm đang chạy nó chạy từ Load-> 0 , đến 0 thì bật COUNTFLAG
+  Và reset lại 
 - SysTick->CTRL = 5U;  
                 bit 0 : Enable SysTick
 		bit 1 : TICKINT : bat ngat
@@ -40,4 +40,4 @@ SysTick->VAL=0U; // Val là biến đếm đang chạy nó chạy từ Load-> 0 
  → LED sẽ **bật/tắt luân phiên mỗi giây**
 
 
-## Ảnh chụp Terminal log
+## Ảnh chụp 
