@@ -17,6 +17,10 @@ Cấu hình Led nháy chu kì chính xác 1ms dùng SysTick
 Nếu bit đó = 1 → chân xuất ra mức HIGH (3.3V) -> led tắt
 Nếu bit đó = 0 → chân xuất ra mức LOW (0V) -> led sáng 
 
+- Push-Pull : có cả transistor kéo lên (PMOS) và kéo xuống (NMOS), nên tạo ra mức logic rõ ràng 0 hoặc 1
++ Đẩy dòng điện ra (khi output = 1 → nối lên VCC)
++ Kéo dòng điện xuống (khi output = 0 → nối xuống GND)
+
 2. **Cấu hình SysTick**
 
 - cấu hình SysTick chạy mỗi 1ms kích hoạt cờ count , giảm 1ms (giảm biến u32Delay)

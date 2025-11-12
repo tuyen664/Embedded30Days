@@ -12,7 +12,7 @@
 
   - TIM2->PSC = 7199; Bộ chia tần số . Clock Timer = 72MHz / 7200 = 10KHz (10KHz/s)
   -> 0.1ms/ Tick
-  + APB1 bus clock (PCLK1) có tần số 36 MHz . Tuy nhiên Timer clock (TIM2–TIM7) lại chạy với
+  + APB1 bus clock (PCLK1) có tần số mặc định 36 MHz . Tuy nhiên Timer clock (TIM2–TIM7) lại chạy với
   tần số là 72MHz do nhân đôi **khi PPRE1 (prescaler của APB1) ≠ 1**
 
   - **TIM2->ARR = 5000-1; TIMER sẽ đếm từ 0 đến 4999 rồi CPU nhảy vào ngắt.**
