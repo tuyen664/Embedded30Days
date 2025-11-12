@@ -32,7 +32,7 @@
   + debounceTime = 50;         // Chong doi 50ms
   + Tắt tạm ngắt EXTI1 trong NVIC tránh nhiễu lúc nhấn nút gây ra kích hoạt ngắt liên tục
    
-  -SysTick ngắt mỗi 1ms, kiểm tra biến debounceTime đã cập nhật chưa , nếu có giảm biến 
+  - SysTick ngắt mỗi 1ms, kiểm tra biến debounceTime đã cập nhật chưa , nếu có giảm biến 
    debounceTime dần về 0 (sau khoảng 50ms)
   - kiểm tra if(debounceTime == 0 && buttonPressed ) 
   + Biến **buttonPressed rất cần thiết** để xác định rằng ngắt EXTI thực sự đã xảy ra, đặc biệt khi
