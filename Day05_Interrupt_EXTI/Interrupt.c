@@ -27,7 +27,7 @@ void GPIO_Config(void)
 
     // PA1: Input pull-up (nut nhan)
     GPIOA->CRL &= ~(0xF << 4);    // clear bits cho PA1
-    GPIOA->CRL |=  (0x8 << 4);    // Input pull-up
+    GPIOA->CRL |=  (0x8 << 4);    // Input pull-up / pull down
     GPIOA->ODR |=  (1 << 1);      // Kéo PA1 Input lên (pull-up)
 }
 

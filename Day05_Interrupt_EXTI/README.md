@@ -11,6 +11,8 @@
  - RCC->APB2ENR |= (1 << 2) | (1 << 4) | (1 << 0);
  - Cấu hình PC13 Là output push-pull 2Mhz
  - Cấu hình PA1 là Input pull-up (cho nút nhấn) , kéo PA1 lên pull-up 
+ + Output : MCU tạo tín hiệu ra ngoài → linh kiện khác (dùng cho LED, motor, relay, v.v)
+ + Input  : MCU nhận tín hiệu từ ngoài (Nút nhấn, cảm biến, UART RX, v.v)
  - GPIOA->ODR |=  (1 << 1);    
 
 2. **Cấu hình EXTI cho PA1**
