@@ -90,12 +90,12 @@
  
 ### 5.2 Vòng lặp 
  **1. Blink LED không chặn**
- if (blinkMode && Delay_Elapsed(blinkLast, 500))
+ - if (blinkMode && Delay_Elapsed(blinkLast, 500))
         {
             LED_TOGGLE();
             blinkLast = GetTick();
         }
- Cứ mỗi 500ms , led nháy 1 lần , nếu ta bật chế độ Blink (blinkMode = 1)
+ - Cứ mỗi 500ms , led nháy 1 lần , nếu ta bật chế độ Blink (blinkMode = 1)
  - blinkMode được bật khi nhận lệnh "BLINK", tắt khi nhận "OFF" hoặc "ON"
  - khi blinkMode = 1, LED sẽ tự động nháy mỗi 500ms mà không cần delay blocking
 

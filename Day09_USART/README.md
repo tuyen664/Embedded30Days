@@ -17,7 +17,8 @@
   + (1<<2) → bật nhận dữ liệu (RX)   - bit RE (Receiver Enable)
 
 **2. Các hàm gửi kí tự**
-  2.1 **void USART1_SendChar(char c)**
+
+ **2.1 void USART1_SendChar(char c)**
   - Kiểm tra xem có đang bận gửi dữ liệu hay không : while(!(USART1->SR & (1<<7)));
   + USART1->SR là Status Register (thanh ghi trạng thái)
   + Bit 7 trong thanh ghi này là TXE (Transmit Data Register Empty)
@@ -31,7 +32,7 @@
   + Sau khi ghi xong, phần cứng UART sẽ tự động **reset TXE = 0** và bắt đầu 
    quá trình gửi bit ra đường truyền.
 
-  2.2 **void USART1_SendString(char *str)**
+ **2.2 void USART1_SendString(char *str)**
   - gửi một chuỗi ký tự (string) qua cổng USART1, bằng cách gửi từng ký tự một 
     cho đến khi gặp ký tự kết thúc('\0')
   - while(*str)
