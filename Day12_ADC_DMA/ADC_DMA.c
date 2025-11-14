@@ -2,9 +2,9 @@
 #include <stdio.h>
 
 #define ADC_CHANNELS   3
-#define ADC_CH1        0
-#define ADC_CH2        1
-#define ADC_CH3        2
+#define ADC_CH0        0
+#define ADC_CH1        1
+#define ADC_CH2        2
 #define VREF           3.3f
 #define ADC_RES        4095.0f
 #define BAUD_9600_BRR  0x1D4C   // 9600 bps @72MHz
@@ -26,7 +26,7 @@ static void delay_ms(uint32_t ms);
 // ============================================================
 int main(void)
 {
-    char msg[80];
+    char msg[100];
     float volts[ADC_CHANNELS];
 
     UART1_Init();
@@ -93,17 +93,17 @@ static void ADC1_Config(void)
     RCC->CFGR |=  (0x2U << 14);
 
     // Configure PA0–PA2 as analog inputs (ADC_CH0–CH2)
-    GPIOA->CRL &= ~((0xF << (ADC_CH1 * 4)) |
-                    (0xF << (ADC_CH2 * 4)) |
-                    (0xF << (ADC_CH3 * 4)));
+    GPIOA->CRL &= ~((0xF << (ADC_CH0 * 4)) |
+                    (0xF << (ADC_CH1 * 4)) |
+                    (0xF << (ADC_CH2 * 4)));
 
     // Configure sample time for channels 0–2 to 239.5 cycles
-    ADC1->SMPR2 &= ~((0x7U << (3 * ADC_CH1)) |
-                     (0x7U << (3 * ADC_CH2)) |
-                     (0x7U << (3 * ADC_CH3)));
-    ADC1->SMPR2 |=  ((0x7U << (3 * ADC_CH1)) |
-                     (0x7U << (3 * ADC_CH2)) |
-                     (0x7U << (3 * ADC_CH3)));
+    ADC1->SMPR2 &= ~((0x7U << (3 * ADC_CH0)) |
+                     (0x7U << (3 * ADC_CH1)) |
+                     (0x7U << (3 * ADC_CH2)));
+    ADC1->SMPR2 |=  ((0x7U << (3 * ADC_CH0)) |
+                     (0x7U << (3 * ADC_CH1)) |
+                     (0x7U << (3 * ADC_CH2)));
 
     // Power on ADC
     ADC1->CR2 |= (1U << 0);              // ADON = 1 (wake up)
@@ -132,7 +132,7 @@ static void ADC1_DMA_ConFig(void)
     ADC1->SQR1 |= (ADC_CHANNELS - 1U) << 20;  // L = N - 1
 
     // Define sequence: rank1 = CH0, rank2 = CH1, rank3 = CH2
-    ADC1->SQR3 = (ADC_CH1 << 0) | (ADC_CH2 << 5) | (ADC_CH3 << 10);
+    ADC1->SQR3 = (ADC_CH0 << 0) | (ADC_CH1 << 5) | (ADC_CH2 << 10);
 
     // Use software trigger (EXTSEL = 111 -> SWSTART)
     ADC1->CR2 &= ~(0x7U << 17);
@@ -190,7 +190,9 @@ static void delay_ms(uint32_t ms)
     SysTick->CTRL = (1U << 2) | (1U << 0); // CLKSOURCE = HCLK, ENABLE = 1
 
     while (ms--)
-        while (!(SysTick->CTRL & (1U << 16))); // Wait for COUNTFLAG
+		{
+     while (!(SysTick->CTRL & (1U << 16))); // Wait for COUNTFLAG
+		}
 
     SysTick->CTRL = 0;
     SysTick->VAL  = 0;
