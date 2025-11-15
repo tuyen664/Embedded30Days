@@ -20,7 +20,7 @@
 ### Auto Mode (Dựa vào cảm biến ADC)
 
 - Đọc điện áp từ 3 channel ADC: CH0 → PA0 → left , CH1 → PA1 → mid (không dùng) , CH2 → PA2 → right
-- logic điều khiển : ![1](./png/1.png)
+- logic điều khiển : ![hinh1](./hinh/hinh1.png)
 
      
 
