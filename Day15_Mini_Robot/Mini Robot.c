@@ -30,6 +30,7 @@ static void UART1_Init(void);
 static void UART1_SendString(const char *s);
 static char UART1_ReceiveChar(void);
 static void TIM4_PWM_Init(void);
+static void ADC1_StartConversion(void);
 static void Servo_SetAngle(uint8_t angle);
 static void SysTick_Init(void);
 static void delay_ms(uint32_t ms);
@@ -51,16 +52,12 @@ int main(void)
 
     System_Init();
     UART1_SendString("\r\n=== Mini Robot: ADC + PWM Servo + UART ===\r\n");
+	
     Servo_SetAngle(servo_angle);
 
     // Start continuous ADC conversion
-    ADC1->CR2 |= (1U << 0);      // ADON lan 2 
-    delay_ms(1);
-    ADC1->CR2 |= (1U << 22);     // Start conversion (SWSTART)
+	  ADC1_StartConversion();
 	
-	
-	
-
     while (1)
     {
 			
@@ -70,10 +67,10 @@ int main(void)
         {
             char c = UART1_ReceiveChar();
 					
-					 if (i == 0)
+					 if (i == 0) // nhap ki tu dau tien la auto stop ngay
             {
               manual_mode = 1;
-              last_manual_time = millis();
+              last_manual_time = millis(); // luu lai thoi diem bat dau manual , qua 5s chuyen auto
             }
 
             if (c == '\r' || c == '\n')
@@ -97,10 +94,14 @@ int main(void)
             {
                 rx_buf[i++] = c;
             }
-            else
+           /* else 
             {
                 i = 0; // reset buffer on invalid char
-            }
+            } */
+						else if (c < '0' || c > '9') 
+						{
+							// invalid char -> ignore, do not reset
+						}
         }
 
         // ----- Auto Servo Control (based on ADC values) -----
@@ -272,6 +273,13 @@ static void DMA1_CH1_Config(void)
 	// DIR = 1 -> Memory -> Peripheral
 	
     DMA1_Channel1->CCR |= (1U << 0);      // Enable DMA channel
+}
+
+static void ADC1_StartConversion(void)
+{
+  ADC1->CR2 |= (1U << 0);      // ADON lan 2 
+    delay_ms(1);
+  ADC1->CR2 |= (1U << 22);     // Start conversion (SWSTART)	
 }
 
 // ================== DELAY (SYSTICK) ==================

@@ -1,0 +1,230 @@
+#include "stm32f10x.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+#define BAUD_9600_BRR   0x1D4C    // Pre-calculated for 72MHz -> 9600 baud
+#define SYSCLK_HZ       72000000UL
+
+
+static void System_Init(void);
+static void UART1_Init(void);
+static void UART1_SendString(const char *s);
+
+static void TIM4_PWM_Init(void);
+
+static void SysTick_Init(void);
+static void delay_ms(uint32_t ms);
+
+static void ADC1_Config(void);
+static uint16_t readADC_Avg(uint8_t samples);
+
+static float PID_Update(float set, float real);
+
+float kp = 2.0f;
+float ki = 0.1f;
+float kd = 0.05f;
+float prev_error = 0, integral = 0;
+
+
+int main(void)
+{
+	System_Init();
+	
+	float setTemp = 35.0f;  // Nhiet Do Muc Tieu
+  char buffer[64];
+	
+	 while (1)
+    {
+        uint16_t adc_val = readADC_Avg(5);
+        float temp = (adc_val * 3.3f / 4095.0f) * 100.0f; // LM35: 10mV/°C
+
+        // ====== PID ======
+       float duty = PID_Update(setTemp, temp);
+
+        // Cap nhat PWM duty
+       
+        TIM4->CCR4 = (duty * (TIM4->ARR + 1)) / 100;
+
+        sprintf(buffer, "Temp=%.1fC | Duty=%.1f%%\r\n", temp, duty);
+        UART1_SendString(buffer);
+
+        delay_ms(200);
+    }
+	
+    
+}
+
+float PID_Update(float set, float real)
+{
+    float dt = 0.5f;                 // Thoi gian chu ki PID (0.5 giây)
+    float error = set - real;        // Sai so
+
+    // Vung chet (deadband): bo qua sai so nho de tranh dao dong
+    if (fabs(error) < 0.2f) error = 0;
+
+    // Thanh phan tich phan (I)
+    integral += error * dt;
+    if (integral > 100) integral = 100;
+    if (integral < -100) integral = -100;
+
+    // Thanh phan vi phân (D)
+    float derivative = (error - prev_error) / dt;
+    prev_error = error;
+
+    float output = kp * error + ki * integral + kd * derivative;
+
+    if (output > 100) output = 100;
+    if (output < 0) output = 0;
+
+    // Chong bao hoa tich phan (Anti-windup)
+    if (output == 0 || output == 100)
+        integral -= error * dt;
+
+    return output;   // Tra ve duty cycle (%)
+}
+
+
+static void System_Init(void)
+{
+    SysTick_Init();
+    UART1_Init();
+    TIM4_PWM_Init();
+    ADC1_Config();
+}
+
+static void UART1_Init(void)
+{
+    RCC->APB2ENR |= (1U << 2) | (1U << 14); // Enable GPIOA + USART1 clocks
+
+    // PA9 = TX (AF Push-Pull), PA10 = RX (Input Floating)
+    GPIOA->CRH &= ~((0xFU << 4) | (0xFU << 8));
+    GPIOA->CRH |=  (0x0B << 4) | (0x04 << 8);
+
+    USART1->BRR = BAUD_9600_BRR;
+    USART1->CR1 = (1U << 13) | (1U << 3) | (1U << 2); // UE, TE, RE
+}
+
+static void UART1_SendString(const char *s)
+{
+    while (*s)
+    {
+        while (!(USART1->SR & (1U << 7))); // Wait TXE = 1
+        USART1->DR = *s++;
+    }
+}
+
+static void TIM4_PWM_Init(void)
+{
+    RCC->APB2ENR |= (1U << 3); // GPIOB clock
+    RCC->APB1ENR |= (1U << 2); // TIM4 clock
+    RCC->APB2ENR |= (1U << 0); // AFIO clock
+
+    // PB9: Alternate Function Push-Pull output
+    GPIOB->CRH &= ~(0xFU << 4);
+    GPIOB->CRH |=  (0x0B << 4);
+
+    TIM4->PSC = 71;              // 1MHz timer clock (72MHz / (71+1))
+    TIM4->ARR = 1000 - 1;       // 1khz PWM -> led muot
+    TIM4->CCR4 = 0;           // duty = 0
+	
+    TIM4->CCMR2 |= (6U << 12) | (1U << 11); 
+	// OC4M = 110 (14-12) -> PWM MODE 1  , OC4PE = 1 (bit 11) -> enable Preload
+	// preload -Gia tri moi ghi vao CCR4 chi co hieu luc khi co su kien update
+    TIM4->CCER  |= (1U << 12);    // Enable output on CH4
+	// TIM4->CCER |= (1U << 13); // Active low output
+    TIM4->CR1   = (1U << 7) | (1U << 0); // ARPE + Counter enable
+	// ARPE  : giup pwm on dinh khi thay doi ARR
+
+    TIM4->EGR  |= 1;             // Update event
+}
+
+static void ADC1_Config(void)
+{
+    RCC->APB2ENR |= (1U << 2) | (1U << 9); // GPIOA + ADC1 clock
+    RCC->CFGR &= ~(0x3U << 14);
+    RCC->CFGR |=  (0x2U << 14); // PCLK2 / 6 = 12MHz for ADC
+
+    // PA0, PA1, PA2 -> Analog mode
+    GPIOA->CRL &= ~((0xFU << 0) | (0xFU << 4) | (0xFU << 8));
+
+    // Sample time selection ->  239.5 ADC cycles
+    ADC1->SMPR2 |= (0x7U << 0) | (0x7U << 3) | (0x7U << 6);
+
+    // ADC calibration
+    ADC1->CR2 |= (1U << 0); // ADON first time
+    delay_ms(1);
+    ADC1->CR2 |= (1U << 3); while (ADC1->CR2 & (1U << 3)); // RSTcal -> Reset Cal
+    ADC1->CR2 |= (1U << 2); while (ADC1->CR2 & (1U << 2)); // Calibrate
+	
+	  ADC1->CR2 |= (1U << 1);               // CONT mode
+    ADC1->SQR3 = 0;                       // Channel 0 (PA0)
+	  ADC1->CR2 |= (1U << 0); // Bat ADC lan 2 sau khi calibrate
+    ADC1->CR2 |= (1U << 22);              // SWSTART (start conversion)
+}
+static uint16_t readADC(void)
+{
+    while (!(ADC1->SR & (1U << 1)));
+	
+	  ADC1->SR &= ~(1U << 1);          // xóa EOC (truong hop ADC liên tuc)
+    return ADC1->DR;
+}
+
+static uint16_t readADC_Avg(uint8_t samples)
+{
+    uint32_t sum = 0;
+    for (uint8_t i = 0; i < samples; i++)
+    {
+        sum += readADC();
+			  delay_ms(2);
+    }
+    return (uint16_t)(sum / samples);
+}
+
+
+volatile uint32_t tick_ms = 0;
+
+static void SysTick_Init(void)
+{
+    SysTick->LOAD = (SYSCLK_HZ / 1000U) - 1U;
+    SysTick->VAL  = 0;
+    SysTick->CTRL = 7U; // Enable, TickInt, AHB clock
+}
+
+void SysTick_Handler(void)
+{
+    tick_ms++;
+}
+
+static void delay_ms(uint32_t ms)
+{
+    uint32_t start = tick_ms;
+    while ((tick_ms - start) < ms);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
