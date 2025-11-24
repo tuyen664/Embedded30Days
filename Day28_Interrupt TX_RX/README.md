@@ -6,7 +6,7 @@
 - Task để nhận lệnh UART (command)
 - Task điều khiển LED theo command
   
--**ISR (RX) → Queue → Task_UART_Receiver → Queue → Task_LED_Control → LED**                                     
+ **ISR (RX) → Queue → Task_UART_Receiver → Queue → Task_LED_Control → LED**                                     
 
 - ISR RX: nhận từng ký tự → chuyển vào queue RX
 - Task_UART_Receiver: ghép ký tự thành command → gửi command sang queue Cmd
@@ -34,7 +34,7 @@ NVIC_EnableIRQ(USART1_IRQn);
 - ISR này chạy khi Một byte vừa nhận xong , USART_SR_RXNE = 1 
 - Nếu tốc độ baud cao hoặc task xử lý chậm → overrun (ORE) → mất dữ liệu
   
-**2.TXE interrupt nguy hiểm nếu bật sai thời điểm**
+**2. TXE interrupt nguy hiểm nếu bật sai thời điểm**
 - Nếu bật TXEIE khi TX buffer rỗng → CPU bị spam interrupt → treo hệ thống
 -> bật TXEIE chỉ khi có dữ liệu để gửi  
 
@@ -68,13 +68,13 @@ void UART1_SendChar_IT(char c)
 - Nếu UART đang bận → đưa ký tự vào queue (hàng đợi) để ISR gửi dần
 - ISR TX sẽ tự động gửi các ký tự còn lại trong queue mỗi lần TXE interrupt xảy ra.
   
-**1.Check queue**
+**1. Check queue**
 ```c
 if (xQueueTxChar == NULL) return;
 ```
 → Nếu queue chưa tạo → thoát để tránh crash.
 
-**2.taskENTER_CRITICAL()**
+**2. taskENTER_CRITICAL()**
 
 - Bảo vệ vùng code khỏi : ISR , task khác , race condition khi truy cập queue hoặc thanh ghi UART
 - Đây là điểm **rất quan trọng** trong RTOS khi làm UART DMA/Interrupt
