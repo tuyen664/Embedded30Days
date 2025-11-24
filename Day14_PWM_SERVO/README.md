@@ -59,5 +59,5 @@
 - Delay 1 khoảng thời gian để servo có thời gian quay 
 - In thông báo góc đã quay của servo lên màn hình. 
 
-Ảnh chụp
+## Ảnh chụp
 
