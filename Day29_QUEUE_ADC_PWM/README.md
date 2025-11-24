@@ -15,11 +15,13 @@ xQueueADC = xQueueCreate(10, sizeof(uint16_t));
 **2. Mutex cho UART (xUART_Sem)**
 - xSemaphoreTake(xUART_Sem, portMAX_DELAY) → bảo vệ UART, tránh race condition khi nhiều task cùng in
 -  Mutex cũng hỗ trợ **priority inheritance** tự động → tránh priority inversion
+  
 **3. Timer Monitor**
 ```c 
 xTimerCreate("Monitor", pdMS_TO_TICKS(3000), pdTRUE, 0, vTimerCallback_Monitor)
 ```
 - Timer chạy cứ 3 giây → gọi callback toggle LED + in UART
+  
 **4. Task_ADC_Read**
 ```c
 adc_send = readADC_Avg (ADC_CHANNEL,5);
@@ -28,7 +30,7 @@ vTaskDelay(pdMS_TO_TICKS(200));
 ```
 - Đọc ADC và gửi vào xQueueADC cho task khác sử lý
 
-**5.Task_PWM_Control***
+**5.Task_PWM_Control**
 ```c
 if (xQueueReceive(xQueueADC, &adc_recv, portMAX_DELAY) == pdPASS)
 {
