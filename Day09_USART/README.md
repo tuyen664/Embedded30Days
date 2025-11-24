@@ -26,13 +26,13 @@
   + TXE = 0: Đang bận gửi dữ liệu cũ → chưa sẵn sàng.
   -> Chờ cho đến khi TXE = 1, tức là chờ đến khi USART sẵn sàng gửi ký tự mới.
   
-  - **USART1->DR = c;**
+  **USART1->DR = c;**
   + Khi TXE = 1, gán dữ liệu c vào Data Register (DR).
   + Lúc này UART sẽ **tự động** truyền giá trị đó ra chân TX (PA9).
   + Sau khi ghi xong, phần cứng UART sẽ tự động **reset TXE = 0** và bắt đầu 
    quá trình gửi bit ra đường truyền.
 
- **2.2 void USART1_SendString(char *str)**
+ **2.2 void USART1_SendString()**
   - gửi một chuỗi ký tự (string) qua cổng USART1, bằng cách gửi từng ký tự một 
     cho đến khi gặp ký tự kết thúc('\0')
   - while(*str)
