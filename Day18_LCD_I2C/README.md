@@ -267,7 +267,7 @@ LCD_SendCmd(addr, 0x0C); // 0 0 0 0 1 D C B -> 1100
 - Nếu muốn con trỏ nhấp nháy → set B=1
 - Nếu muốn cursor hiện → set C=1
 
-## Những điều quan trọng và thường bị bỏ sót
+## Lưu ý
 - LCD gốc = giao tiếp song song
 - I2C không hiểu lệnh LCD
 - LCD bản chất có 2 chế độ: 4-bit / 8-bit
