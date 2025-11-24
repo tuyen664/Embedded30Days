@@ -38,7 +38,7 @@ static void vTimerCallback_LED(TimerHandle_t xTimer)
 ```
 - Mỗi 1 giây → đảo trạng thái LED.
   
-**2.vTimerCallback_UART()**
+**2. vTimerCallback_UART()**
 ```c
 static void vTimerCallback_UART(TimerHandle_t xTimer)
 {
@@ -47,7 +47,7 @@ static void vTimerCallback_UART(TimerHandle_t xTimer)
 ```
 - Mỗi 1 giây → in một dòng UART
   
-**3.vTimerCallback_UART2()**
+**3. vTimerCallback_UART2()**
 ```c
 static void vTimerCallback_UART2(TimerHandle_t xTimer)
 {
@@ -92,7 +92,7 @@ static void vTimerCallback_UART2(TimerHandle_t xTimer)
 - Ta đang viết thẳng vào USART1->DR trong callback timer → đây là race-condition nếu có nhiều task cùng gửi UART.
 - cách chuẩn : Một task UART duy nhất -> gộp cả 2 uart vào 1
   
-**8.timer sẽ bị trễ**
+**8. Timer sẽ bị trễ**
 - Software Timer không có độ chính xác tuyệt đối
 - Chỉ đảm bảo: “thực thi càng sớm càng tốt khi timer task được chạy”
   
@@ -102,7 +102,7 @@ static void vTimerCallback_UART2(TimerHandle_t xTimer)
 
 ## Các đoạn code bổ xung 
 
-- Timer callback – gửi event vào Queue
+**Timer callback – gửi event vào Queue**
 
 ```c
 /* Event type */
@@ -122,7 +122,9 @@ void vTimerCallback_UART(TimerHandle_t xTimer)
     xQueueSendFromISR(xEventQueue, &evt, NULL);
 }
 ```
-- Task – nhận event và xử lý 
+
+**Task – nhận event và xử lý**
+
 ```c
 void vTaskEventProcess(void *pvParameters)
 {
@@ -145,7 +147,8 @@ void vTaskEventProcess(void *pvParameters)
 ```
 - lưu ý : EVT_TIMER_UART và Event_t là ta tự đặt tên
 
-- Kiểm tra Start Timer
+  **Kiểm tra Start Timer**
+  
 ```c
 BaseType_t status1, status2, status3;
 
