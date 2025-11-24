@@ -1,9 +1,20 @@
-## Mục tiêu 
+# STM32F103 I2C LCD Demo
+## Tổng Quan
 
+- Đây là dự án sử dụng **STM32F103** để giao tiếp với **LCD qua I2C (PCF8574)** và debug bằng **UART1**.
+- Khởi tạo hệ thống: clock, SysTick, UART, I2C
+- Tự động phát hiện địa chỉ LCD trên bus I2C
+- Hiển thị thông báo trên LCD
+- Sử dụng hàm delay dựa trên SysTick
+- Thực hành giao tiếp I2C cơ bản với timeout và xử lý lỗi
+## Phần cứng
+- STM32F103C8T6 
+- LCD 20x4 có module I2C (PCF8574)
+- USB-UART 
 
 ## 1. Cấu hình I2C1
 
-**1.1 Bật clock GPIOB và I2C1
+**1.1 Bật clock GPIOB và I2C1**
 
 - APB2ENR bật clock cho GPIOB ( PB6=SCL, PB7=SDA).
 - PB6 = SCL: dây đồng hồ do STM32 điều khiển, đồng bộ dữ liệu I2C.
@@ -29,7 +40,7 @@
 - Sau đó nhả reset (0) để bắt đầu cấu hình tiếp.
 - Lưu ý : Đây là bước quan trọng khi I2C bị treo hoặc khởi tạo lại.
 
-**1.3 Cấu hình tần số APB1
+**1.3 Cấu hình tần số APB1**
 
 - I2C1->CR2 = 36; // 36MHz = APB1 (PCLK1)
 - CR2 chứa tần số clock của bus I2C (PCLK1)
@@ -150,7 +161,7 @@ while (!(I2C1->SR1 & (1U << 2))) // BTF: Byte Transfer Finished
 - PCF8574 không hiểu lệnh LCD , Nó chỉ biết bật/tắt các chân D4–D7, RS, E, BL 
 - Vì vậy 1 lệnh LCD → 2 phần 4-bit gửi qua I2C
 
-**3.1 Gửi một lệnh LCD lại phải gửi tới 4 byte I2C.
+**3.1 Gửi một lệnh LCD lại phải gửi tới 4 byte I2C**
 
 - LCD dùng giao tiếp 4-bit  : Không gửi cả byte 8-bit một lần.
 - Tách thành Upper 4 bits và Lower 4 bits. (2byte)
@@ -178,12 +189,12 @@ uint8_t lower = (cmd << 4) & 0xF0;
 - addr: địa chỉ I2C của LCD (ví dụ 0x27 hoặc 0x3F).
 - data_: byte ký tự cần hiển thị trên LCD.
 
-**4.1 Chuẩn bị dữ liệu 4 nibbles
+**4.1 Chuẩn bị dữ liệu 4 nibbles**
 ```c
 uint8_t upper = data_ & 0xF0;
 uint8_t lower = (data_ << 4) & 0xF0;
 ```
-**4.2 Tạo các gói dữ liệu I2C cho LCD 
+**4.2 Tạo các gói dữ liệu I2C cho LCD** 
 ```c
 data[0] = upper | LCD_BACKLIGHT | LCD_ENABLE | LCD_RS;
 data[1] = upper | LCD_BACKLIGHT | LCD_RS;
@@ -205,12 +216,12 @@ data[3] = lower | LCD_BACKLIGHT | LCD_RS;
 
 ## 5. LCD_Init()
 
-**5.1 Delay 50ms trước khi khởi tạo
+**5.1 Delay 50ms trước khi khởi tạo**
 - DelayMs(50);
 - Khi LCD vừa được cấp nguồn, cần chờ ổn định khoảng 40–50ms trước khi gửi lệnh đầu tiên.
 - Nếu gửi lệnh quá sớm → LCD không nhận lệnh, màn hình trắng hoặc hiển thị sai.
 
-**5.2 Gửi lệnh khởi tạo 0x30 nhiều lần
+**5.2 Gửi lệnh khởi tạo 0x30 nhiều lần**
 ```c
 LCD_SendCmd(addr, 0x30);
 DelayMs(5);

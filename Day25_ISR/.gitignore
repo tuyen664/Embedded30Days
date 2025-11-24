@@ -1,0 +1,26 @@
+# Ignore Keil build output folders
+Objects/
+Listings/
+DebugConfig/
+RTE/
+
+# Ignore Keil user-specific and build files
+*.uvguix.*
+*.uvoptx
+*.axf
+*.lst
+*.map
+*.o
+*.d
+*.crf
+*.htm
+*.lnp
+*.bak
+*.dep
+
+# Ignore generated binaries
+*.hex
+*.bin
+
+# Ignore VSCode config (if any)
+.vscode/
