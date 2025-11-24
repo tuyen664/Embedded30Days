@@ -19,7 +19,7 @@
 - Servo thường hoạt động trong khoảng 500µs → 2500µs.
 - Trong code sử dụng 600µs → 2400µs để tránh rung hoặc chạm biên (nhiều servo bị không ổn định ở mức giới hạn).
 
-###1. Cấu hình PWM cho PB9 (PWM TIM4)
+**1. Cấu hình PWM cho PB9 (PWM TIM4)**
 
 - Bật clock cho GPIOB và TIM4 , bật AFIO
 - Cấu hình PB9 là AF Push-Pull ,  tốc độ 50MHz
@@ -27,7 +27,7 @@
 - TIM4->ARR = 20000-1; // servo hoạt động ở chu kì 20ms = 50hz
 - TIM4->CCR4 = 1500; // Mặc định sau khi reset đưa servo về vị trí trung tâm (khoảng 90°)
 
-###2. Hàm chuyển từ Góc cần quay sang số tick cần điều khiển trong TIM4->CCR4 
+**2. Hàm chuyển từ Góc cần quay sang số tick cần điều khiển trong TIM4->CCR4** 
 
 - Ở đây ta điều khiển trực tiếp qua số tick ở TIM4->CCR4  (không cần đến phần trăm duty)
 - pulse = SERVO_MIN_US + ((SERVO_MAX_US - SERVO_MIN_US) * angle) / 180U; // (600 -> 2400) tương ứng (0 -180 độ)
@@ -36,7 +36,7 @@
 - Khi ta thay đổi CCR4 và set EGR |= 1,timer cần ít nhất một chu kỳ để phát ra xung PWM mới.
 - Delay 10 ms đảm bảo PWM ổn định , tránh cập nhật quá nhanh.
 
-###3. Vòng lặp chính 
+**3. Vòng lặp chính** 
  
 - Tạo mảng **char buffer[32];** để lưu lệnh nhận được từ Tera Term qua UART
 - Biến c đọc từng ký tự nhận về , biến i là idex của buffer  
