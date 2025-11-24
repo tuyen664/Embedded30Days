@@ -393,7 +393,7 @@ CS_Deselect(csPort,csPin);
 - CPOL = 1 → SCK nhàn rỗi ở mức cao (Idle = High)
 - CPHA = 0 → Sample (lấy dữ liệu) ở cạnh đầu tiên
 - CPHA = 1 → Sample ở cạnh thứ hai
-- ![CPOL_CPHA](./png/CPOL_CPHA.PNG)
+- ![CPOL%20_CPHA](./png/CPOL%20_CPHA.PNG)
 
 **3. SCK quyết định tốc độ truyền SPI** 
 - SCK càng cao → tốc độ SPI càng nhanh
