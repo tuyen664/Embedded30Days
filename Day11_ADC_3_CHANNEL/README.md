@@ -33,7 +33,7 @@
  - ADC sẽ tự đo và hiệu chỉnh sai lệch phần cứng bên trong. Chờ cho đến khi bit CAL tự về 0 (cal xong).
  -> Nếu bỏ bước này, ADC sẽ đọc sai lệch nhiều.
  
- **- Tóm tắt lại các bước khởi tạo ADC** : 
+ **Tóm tắt lại các bước khởi tạo ADC** : 
  - Bật clock GPIOA, ADC1
  - Set PA0–PA2 analog
  - Bật ADC (ADON). Delay 1ms 
@@ -53,7 +53,7 @@
 
 #### 1.2 Đọc trung bình 5 mẫu dữ liệu để chính xác hơn : static uint16_t ADC1_ReadAverage(uint8_t channel, uint8_t sample_count)
  - Tham số : **channel** → chỉ định kênh ADC muốn đọc (VD: 0 = PA0, 1 = PA1, v.v.)
- - **sample_count** → số lượng mẫu ta muốn lấy để tính trung bình
+  **sample_count** → số lượng mẫu ta muốn lấy để tính trung bình
  - Biến sum dùng để cộng dồn tất cả các mẫu ADC. Dùng kiểu uint32_t (32-bit) để tránh tràn số khi cộng nhiều mẫu.
  - sum += ADC1_Read(channel); Cộng dồn các giá trị đọc được từ ADC vào sum
  - return (uint16_t)(sum / sample_count); // Chia tổng sum cho sample_count → lấy giá trị trung bình.Ép kiểu về uint16_t vì kết quả luôn nằm trong 0–4095
