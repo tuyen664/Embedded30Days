@@ -1,4 +1,4 @@
-## Mục tiêu bài học:
+## Mục tiêu:
 Cấu hình Led nháy chu kì chính xác 1ms dùng SysTick
 
 
@@ -9,7 +9,7 @@ Cấu hình Led nháy chu kì chính xác 1ms dùng SysTick
 
 ## Giải thích code hoạt động : 
 
-1. **Cấu hình GPIO** 
+**1. Cấu hình GPIO** 
 
 - Bật clock cho port C (RCC->APB2ENR |= 0x10)
 - Cấu hình chân **PC13** là **Output Push-Pull, tốc độ 50 MHz**
@@ -21,7 +21,7 @@ Nếu bit đó = 0 → chân xuất ra mức LOW (0V) -> led sáng
 + Đẩy dòng điện ra (khi output = 1 → nối lên VCC)
 + Kéo dòng điện xuống (khi output = 0 → nối xuống GND)
 
-2. **Cấu hình SysTick**
+**2. Cấu hình SysTick**
 
 - cấu hình SysTick chạy mỗi 1ms kích hoạt cờ count , giảm 1ms (giảm biến u32Delay)
 
@@ -37,7 +37,7 @@ Nếu bit đó = 0 → chân xuất ra mức LOW (0V) -> led sáng
 		bit 16: COUNTFLAG : Co bao dem xong (auto clear khi doc)
      → Bật SysTick, dùng clock CPU, không dùng ngắt
 
-3. **Vòng lặp chính** 
+**3. Vòng lặp chính** 
 
 - Mỗi khi đủ 1000 ms (1 giây), chương trình **đảo trạng thái bit PC13**
 - GPIOC->ODR ^= (1 << 13);
