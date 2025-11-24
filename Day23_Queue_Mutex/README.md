@@ -40,7 +40,8 @@ static void Task_Button(void *pvParameters)
 const TickType_t debounce = pdMS_TO_TICKS(50);
 ```
 - debounce delay = 50ms
-- Nếu **configTICK_RATE_HZ = 1000** , 1 tick = 1ms 
+- Nếu **configTICK_RATE_HZ = 1000** , 1 tick = 1ms
+  
 **2. Vòng for chính**
 ```c
 uint8_t curr = (GPIOA->IDR & (1 << BUTTON_PIN)) ? 1 : 0;
@@ -169,7 +170,8 @@ static void Task_Button_UART(void *pvParameters)
 **1. Biến nhận dữ liệu queue**
 - uint8_t recv; 
 - Data từ queue được copy vào biến này.
-**2.Nhận queue (block cho đến khi có nút nhấn**
+  
+**2. Nhận queue (block cho đến khi có nút nhấn**
 ```c
 if (xQueueReceive(xQueueButton, &recv, portMAX_DELAY) == pdPASS)
 ```
@@ -177,6 +179,7 @@ if (xQueueReceive(xQueueButton, &recv, portMAX_DELAY) == pdPASS)
 -> Vì thế task này không cần priority cao, nó chỉ chạy khi thật sự cần → rất tối ưu.
 - KHÔNG tốn CPU, KHÔNG polling.
 - FreeRTOS scheduler chỉ đánh thức task này khi Task_Button gửi msg.
+  
 **3. Bảo vệ UART bằng mutex (prevent race condition)***
 ```c
 if (xSemaphoreTake(xUART_Semaphore, portMAX_DELAY) == pdTRUE)
@@ -188,6 +191,7 @@ if (xSemaphoreTake(xUART_Semaphore, portMAX_DELAY) == pdTRUE)
 - portMAX_DELAY : Nếu UART đang bận → task này sẽ block và nhường CPU
 
 **3. Gửi UART + Toggle LED**
+
 **4. Trả lại mutex**
 ```c
 xSemaphoreGive(xUART_Semaphore);
