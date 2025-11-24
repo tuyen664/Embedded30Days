@@ -32,7 +32,7 @@
 
  - Bắt đầu calibration ADC và chờ bit CAL trở về 0 → ADC đã sẵn sàng.
  
- - **Tóm tắt**
+  **Tóm tắt**
  - Bật clock cho GPIOA và ADC1.
  - Chia clock ADC xuống còn PCLK2/6.
  - Cấu hình PA0–PA2 là analog input.
@@ -61,7 +61,7 @@
  - ADC1->CR2 &= ~(1U<<20); // EXTTRIG = 0 (không dùng ngoại vi) 
  - Vì dùng continuous mode, ADC sẽ tự quét liên tục, nên SWSTART chỉ cần gọi 1 lần là ADC chạy.
 
- - **Tóm tắt**
+ **Tóm tắt**
  - Bật scan mode → đọc nhiều kênh liên tiếp
  - Bật continuous conversion → ADC chạy liên tục
  - Bật DMA request 
@@ -97,14 +97,14 @@
   
  - Sau khi cấu hình xong, bật lại DMA channel : DMA1_Channel1->CCR |= (1U << 0); 
  
- -**Quá trình hoạt động**
+ **Quá trình hoạt động**
  - ADC tạo DMA request và khi có dữ liệu ở ADC->DR  
  - DMA1 Channel1 phát hiện Có request và có dữ liệu ở ADC->DR   → copy giá trị từ ADC1->DR sang adc_buf
  - Sau khi lần lượt copy đủ 3 giá trị (CH0–CH2), quay vòng lại (CIRC) và lặp lại
  - CPU chỉ việc đọc adc_buf[]
 
 ### 4. ADC Bắt đầu Conversion  
- -**Lưu ý quan trọng là ADC chỉ có thể bắt đầu Conversion sau khi ADC và DMA đã được cấu hình & bật hoàn tất hết**
+ **Lưu ý quan trọng là ADC chỉ có thể bắt đầu Conversion sau khi ADC và DMA đã được cấu hình & bật hoàn tất hết**
 
 ### 5. Vòng Lặp chính
  - Ta phải sắp xếp thứ thự chạy các hàm hợp lý , để tránh DMA đọc nhầm dữ liệu rác.
@@ -115,7 +115,7 @@
  - Bật ADC lần 2 (ADON)
  - Bật SWSTART để bắt đầu quét liên tục
 
-**- Tóm Tắt quá trình hoạt động**
+**Tóm Tắt quá trình hoạt động**
  - Khi reset, CPU cấu hình ADC + DMA đầy đủ.
  - Khi bật bit DMA = 1, ADC cho phép DMA hoạt động, nhưng DMA chỉ thực sự chuyển dữ liệu khi ADC có kết quả trong DR.
  - Khi SWSTART = 1, ADC bắt đầu chuyển đổi theo thứ tự :
