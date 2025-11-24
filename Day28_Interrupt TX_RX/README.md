@@ -5,7 +5,8 @@
 - Timer để gửi message
 - Task để nhận lệnh UART (command)
 - Task điều khiển LED theo command
-- ISR (RX) → Queue → Task_UART_Receiver → Queue → Task_LED_Control → LED                                     
+  
+-**ISR (RX) → Queue → Task_UART_Receiver → Queue → Task_LED_Control → LED**                                     
 
 - ISR RX: nhận từng ký tự → chuyển vào queue RX
 - Task_UART_Receiver: ghép ký tự thành command → gửi command sang queue Cmd
@@ -28,9 +29,11 @@ NVIC_EnableIRQ(USART1_IRQn);
 - Ta chỉ bật TXEIE khi có dữ liệu cần truyền (trong hàm queue ISR TX)
 
 - NVIC_SetPriority(USART1_IRQn, 8); -> mức ưu tiên interrupt phải lớn hơn **configMAX_SYSCALL_INTERRUPT_PRIORITY**
+  
 **1. RX interrupt RXNEIE chạy mỗi khi nhận 1 byte**
 - ISR này chạy khi Một byte vừa nhận xong , USART_SR_RXNE = 1 
 - Nếu tốc độ baud cao hoặc task xử lý chậm → overrun (ORE) → mất dữ liệu
+  
 **2.TXE interrupt nguy hiểm nếu bật sai thời điểm**
 - Nếu bật TXEIE khi TX buffer rỗng → CPU bị spam interrupt → treo hệ thống
 -> bật TXEIE chỉ khi có dữ liệu để gửi  
@@ -64,15 +67,18 @@ void UART1_SendChar_IT(char c)
 - Nếu UART đang rảnh → ghi thẳng vào thanh ghi DR để gửi ngay
 - Nếu UART đang bận → đưa ký tự vào queue (hàng đợi) để ISR gửi dần
 - ISR TX sẽ tự động gửi các ký tự còn lại trong queue mỗi lần TXE interrupt xảy ra.
+  
 **1.Check queue**
 ```c
 if (xQueueTxChar == NULL) return;
 ```
 → Nếu queue chưa tạo → thoát để tránh crash.
+
 **2.taskENTER_CRITICAL()**
 
 - Bảo vệ vùng code khỏi : ISR , task khác , race condition khi truy cập queue hoặc thanh ghi UART
 - Đây là điểm **rất quan trọng** trong RTOS khi làm UART DMA/Interrupt
+  
 **3. Nếu UART rảnh → gửi ngay lập tức**
 ```c
 if ((USART1->SR & USART_SR_TXE) && !(USART1->CR1 & USART_CR1_TXEIE))
@@ -85,6 +91,7 @@ if ((USART1->SR & USART_SR_TXE) && !(USART1->CR1 & USART_CR1_TXEIE))
 - TXEIE = 0 → Interrupt chưa bật → chứng tỏ UART idle
 -> Viết trực tiếp vào thanh ghi DR để gửi ngay kí tự đầu tiên 
 - Bật TXE interrupt để ISR gửi ký tự tiếp theo từ queue
+  
 **4. Nếu UART đang bận → đưa vào queue**
 ```c
 xQueueSend(xQueueTxChar, &c, 0);
@@ -96,6 +103,7 @@ USART1->CR1 |= USART_CR1_TXEIE;
 
 **5. taskEXIT_CRITICAL()**
 - Kết thúc critical section
+  
 **6. Các lưu ý quan trọng**
 - Ta phải check TXE và TXEIE cùng lúc , vì TXE có thể = 1 nhưng UART vẫn có thể đang bận (ISR đang xử lý)
 - Nếu ta ghi DR lúc đó → gây gửi trùng hoặc mất byte
@@ -112,11 +120,13 @@ USART1->CR1 |= USART_CR1_TXEIE;
 - Nhận dữ liệu UART (RX) và gửi vào queue cho task xử lý
 - Lấy dữ liệu từ queue và gửi UART từng byte (TX)
 - Nếu có task ưu tiên cao hơn đang chờ, ISR sẽ kích hoạt **context switch** ngay sau khi thoát interrupt.
+  
 **1. Khởi tạo biến để kiểm tra có cần switch context không**
 ```c
 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 ```
 - ISR không được tự tiện gọi scheduler, mà phải ghi nhận “có task ưu tiên cao cần chạy ngay hay không”
+  
 **2. Kiểm tra ngắt RX**
 ```c
 if (USART1->SR & USART_SR_RXNE)
@@ -132,6 +142,7 @@ if (USART1->SR & USART_SR_RXNE)
 - Gửi vào queue cho task xử lý
 - Không bao giờ delay trong ISR
 - Không được dùng xQueueSend() mà phải dùng xQueueSendFromISR()
+  
 **3. TX interrupt**
 ```c
 if ((USART1->SR & USART_SR_TXE) && (USART1->CR1 & USART_CR1_TXEIE))
@@ -159,7 +170,8 @@ if ((USART1->SR & USART_SR_TXE) && (USART1->CR1 & USART_CR1_TXEIE))
 ```c
 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 ```
-- Nếu ISR làm một task priority cao hơn “tỉnh dậy”, FreeRTOS sẽ switch ngay. 
+- Nếu ISR làm một task priority cao hơn “tỉnh dậy”, FreeRTOS sẽ switch ngay.
+  
 **4. Tóm tắt**
 - RX: UART nhận byte → kích ISR → ISR gửi vào queue → task xử lý
 - TX: Task gửi chuỗi → task gửi byte đầu tiên vào queue → enable TXE interrupt →
@@ -193,11 +205,13 @@ for (;;)
     {
 ```
 - Task block vô hạn (portMAX_DELAY) cho đến khi có ký tự mới
+  
 **3. Echo ký tự lại UART**
 ```c
 UART1_SendChar_IT(c);
 ```
 - Gửi ký tự lại ngay lập tức để người dùng thấy mình đã gõ gì
+  
 **4. Xử lý chuỗi**
 ```c
 if (idx == 0 && c != '\r' && c != '\n')
@@ -209,6 +223,7 @@ if (idx == 0 && c != '\r' && c != '\n')
 - Khi ta gõ một ký tự → c = ký tự gõ, ví dụ 'A' thì nó mới xem xét đến điều kiện này.
 - Khi người dùng bắt đầu gõ ký tự đầu tiên cho command mới : Ta stop timer monitor , Timer này sẽ được start lại khi command hoàn thành
 - Khi đang gõ chữ , có thể bị xen ngang bởi Timer
+  
 **5. Khi gặp ENTER (\r , \n)**
 ```c
 if (c == '\r' || c == '\n')
