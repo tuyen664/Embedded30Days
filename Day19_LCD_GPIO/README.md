@@ -66,7 +66,7 @@ DelayMs(1);
 - Tính pos = start + col, rồi LCD_SendCmd(pos)
 - **Lưu ý** : địa chỉ DDRAM không liên tục theo dòng trong mô tả vật lý
 
-**6. LCD_Print(const char *str)**
+**6. LCD_Print()**
 - Gọi LCD_SendData() lần lượt cho từng ký tự trong chuỗi
 - Con trỏ tự dịch theo lệnh Entry Mode (đã set trong init)
 
@@ -95,10 +95,11 @@ LCD_Print("No I2C Needed!");
 
 LCD_SetCursor(3, 0);
 LCD_Print("4-bit Parallel OK!");
-``
+```
 - đoạn in 4 dòng
 
-**9 Các lưu ý quan trọng phải nhớ**
+
+**9. Các lưu ý quan trọng**
 
 - LCD 4-bit KHÔNG BAO GIỜ dùng bit thấp (D0–D3) → Vì vậy mọi thứ phải dồn lên 4 bit cao (D7–D4).
 - LCD chỉ lấy dữ liệu khi EN chuyển từ 1 → 0 → Nếu EN quá ngắn hoặc không xuống mức thấp đúng lúc → LCD không nhận lệnh.
