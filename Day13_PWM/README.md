@@ -14,7 +14,7 @@
 
 ## Giải thích 
 
-###1. Cấu hình PWM 1 kHz trên PA6 (TIM3_CH1)
+**1. Cấu hình PWM 1 kHz trên PA6 (TIM3_CH1)**
 
 - Bật clock cho GPIOA và TIM3 : 
 - RCC->APB2ENR |= (1 << 2);  // GPIOA 
@@ -43,7 +43,7 @@
 - TIM3->EGR |= (1 << 0); 
 - EGR bit 0 : UG = 1 → generate update ngay lập tức
 
-###2. Cấu hình TIM2 làm Interrupt
+**2. Cấu hình TIM2 làm Interrupt**
 
 - Enable clock cho TIM2
 - Cấu hình prescaler (PSC) : TIM2->PSC = 7199;  // 72MHz / 7200 = 10 kHz
@@ -54,7 +54,7 @@
 - Bật ngắt TIM2 trong NVIC : NVIC_EnableIRQ(TIM2_IRQn);
 -> Mỗi 1ms gọi TIM2_IRQHandler() ;
 
-###3. TIM2_IRQHandler()
+**3. TIM2_IRQHandler()**
 
 - if(TIM2->SR & (1 << 0)) // bit UIF = 1  → ngắt đúng của TIM2
 - Xóa cờ ngắt : TIM2->SR &= ~(1 << 0); // Nếu không clear → ISR bị gọi liên tục
