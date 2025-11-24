@@ -47,7 +47,7 @@ void Task_LED(void *pvParameters);
 - Stack riêng của task : RTOS sẽ cấp RAM cho task (ví dụ 256 bytes, 512 bytes…) ,không xài chung stack với main() hoặc task khác
 - Mỗi tack có 1 cái **call stack** riêng để chứa : local variables , return address , saved registers khi chuyển context.
 
-- TCB – Task Control Block , nó chứa các thông tin quan trọng :
+**TCB – Task Control Block** , nó chứa các thông tin quan trọng :
 - con trỏ stack hiện tại (SP) , priority , trạng thái task (Running / Ready / Blocked / Suspended)
 - thời gian delay , tên task , địa chỉ hàm task sẽ chạy , usage CPU
 -> hồ sơ quản lí
@@ -148,7 +148,7 @@ int main(void) {
 - FreeRTOS dùng **heap FreeRTOS** , không phải heap của C.
 
 
-**4.vTaskStartScheduler();**
+**4. vTaskStartScheduler();**
 - Bắt đầu chạy Task → từ đây CPU chỉ chạy task, **main() không còn chạy nữa** 
 
 ##. Task_LED
@@ -191,12 +191,14 @@ USART1->DR = (*str++ & 0xFF);
 
 ## Lưu ý quan trọng
 
-1. FreeRTOS không chạy task ngay sau xTaskCreate
+**1. FreeRTOS không chạy task ngay sau xTaskCreate**
 - Phải đợi vTaskStartScheduler() chạy xong SysTick.
-2. vTaskDelay là delay tương đối, không phải delay tuyệt đối
+  
+**2. vTaskDelay là delay tương đối, không phải delay tuyệt đối**
 - Delay từ thời điểm hiện tại của task → là tương đối , không đảm bảo chu kỳ đều
 - Nó sẽ block task ít nhất 500 ms, nhưng không đảm bảo task sẽ chạy lại đúng 500 ms vì còn phụ thuộc vào scheduler 
   và các task khác có priority cao hơn.
+  
 **2.1 Delay tuyệt đối (vTaskDelayUntil)**
 ```c
 TickType_t xLastWakeTime = xTaskGetTickCount();
@@ -214,19 +216,22 @@ for(;;)
 - Nếu task khác priority cao hơn Ready, task sẽ bị trễ, chu kỳ vẫn tính dựa trên xLastWakeTime
 -> Muốn timing cực chính xác → cần task priority cao hoặc dùng hardware timer + ISR
 
-3.UART polling chiếm CPU
+**3. UART polling chiếm CPU**
 - Khi TXE chưa xong → cả task đứng chờ → không làm gì khác.
-4. Stack của Task cực quan trọng
+  
+**4. Stack của Task cực quan trọng**
 - Task_LED stack = 128 words
 - Task_UART stack = 256 words
 - Nếu stack nhỏ quá → crash không báo lỗi !
-5.Priority task = 1 giống nhau → round robin
+  
+**5. Priority task = 1 giống nhau → round robin**
 - Nếu có 1 task delay ít hơn hoặc chạy nhiều hơn → có thể gây starvation.
 - starvation nghĩa là 1 task không bao giờ có cơ hội chạy
 - Starvation xảy ra khi task “chiếm CPU quá nhiều” hoặc “luôn ready” → các task khác không được chạy
 - Cần tránh : Delay hợp lý , Task yield khi cần , Scheduler preemption, tick ngắn, Chú ý priority và priority inheritance
 
-- Task gọi taskYIELD() :
+**Task gọi taskYIELD() :**
+
 - Scheduler kiểm tra: Có task nào priority bằng hoặc cao hơn đang ready không?
 - Nếu có → switch sang task đó ngay.
 - Nếu không → task hiện tại tiếp tục chạy
@@ -236,12 +241,14 @@ for(;;)
 - Task B: priority 3 (cao hơn), vừa ready
 - Nếu preemption bật → RTOS sẽ ngay lập tức cắt Task A, chạy Task B (không cần chờ đến delay)
 - Nếu preemption tắt → Task A tiếp tục chạy, Task B phải chờ
--> Hầu hết FreeRTOS bật preemption mặc định 
-- **Tick ngắn** : ```c #define configTICK_RATE_HZ 1000  // tick = 1ms```
+-> Hầu hết FreeRTOS bật preemption mặc định
+  
+  **Tick ngắn** : ```c #define configTICK_RATE_HZ 1000  // tick = 1ms```
+  
 - Tick ngắn (1ms) → task delay 5ms gần như chính xác
 - Tick dài (10ms) → task delay 5ms → thực tế delay = 10ms, task khác bị chậm → project real-time bị ảnh hưởng
 
-- **Priority inversion** xảy ra khi task có priority cao bị block bởi task priority thấp vì task thấp đang giữ resource chung (ví dụ mutex).
+ **Priority inversion** xảy ra khi task có priority cao bị block bởi task priority thấp vì task thấp đang giữ resource chung (ví dụ mutex).
 - Priority Inheritance giải pháp : Khi một task cao priority bị block vì task thấp priority đang giữ mutex, task thấp sẽ tạm thời được “thừa hưởng” priority của task cao
 - Điều này giúp task thấp hoàn thành nhanh công việc và trả mutex, task cao sẽ chạy tiếp sớm hơn.
 
