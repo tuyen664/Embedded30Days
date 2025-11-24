@@ -179,13 +179,13 @@ while (SPI1->SR & SPI_SR_BSY)
 - len → số byte cần truyền
 - csPort / csPin → chân chip select (slave nào được chọn)
   
-**1.Chọn slave trước khi truyền**
+**1. Chọn slave trước khi truyền**
 - CS_Select(csPort,csPin);
 - Kéo CS xuống LOW → Slave được chọn
 - Lưu ý : Nếu quên kéo CS xuống → Slave không nhận dữ liệu → SPI truyền vô ích
 - **CS phải kéo LOW trước byte đầu tiên, và phải thả HIGH sau byte cuối cùng**
   
-**2.Vòng lặp truyền từng byte**
+**2. Vòng lặp truyền từng byte**
 ```c
 for(uint16_t i=0; i<len; i++)
 {
@@ -256,7 +256,7 @@ void DMA1_Channel2_IRQHandler(void)  // RX
 - Xử lý nặng, reset, báo lỗi thực hiện ngoài IRQ (main loop / task) , ví dụ thêm dmaRxErrorFlag = 1; chẳng hạn
 
 
-**5.Lưu ý quan trọng**
+**5. Lưu ý quan trọng**
 - Xử lý trong ISR không được dùng vòng lặp hoặc delay.
 - Chỉ set cờ hoặc đọc/ghi thanh ghi → nhanh → tránh blocking
 - Vì sao không dùng NVIC_DisableIRQ ở đây : Vì ngắt này rất ngắn → không cần disable IRQ , chỉ disable IRQ nếu thao tác phức tạp.
@@ -393,7 +393,7 @@ CS_Deselect(csPort,csPin);
 - CPOL = 1 → SCK nhàn rỗi ở mức cao (Idle = High)
 - CPHA = 0 → Sample (lấy dữ liệu) ở cạnh đầu tiên
 - CPHA = 1 → Sample ở cạnh thứ hai
-- ![CPOL%20_CPHA](./png/CPOL%20_CPHA.PNG)
+- ![CPOL_CPHA](./png/CPOL_CPHA.PNG)
 
 **3. SCK quyết định tốc độ truyền SPI** 
 - SCK càng cao → tốc độ SPI càng nhanh
