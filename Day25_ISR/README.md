@@ -9,13 +9,14 @@
 **1. Vì sao xSemaphoreGiveFromISR() phải gọi trong ISR?**
 - Vì FreeRTOS tách thành 2 nhóm API: Normal API (Task context) , FromISR API (Interrupt context)
 - Nếu bạn gọi API normal trong ISR → crash hoặc lỗi bất thường
+  
 **2. Tại sao phải dùng portYIELD_FROM_ISR()?**
 - Vì sau khi interrupt giải phóng semaphore, có thể có task priority cao hơn vừa được unblock → **cần chạy ngay**
 - Ví dụ : Task_TimerHandler priority = 2 , Các task khác = 1
 - ISR Give semaphore → Task_TimerHandler READY → priority cao nhất → cần chạy NGAY **không chờ tick*8
 -> portYIELD_FROM_ISR() ép FreeRTOS context switch ngay trong ISR
 
-**3.LỖI QUAN TRỌNG: Priority của TIM2 phải ≥ 8**
+**3. LỖI QUAN TRỌNG: Priority của TIM2 phải ≥ 8**
 ```C
 NVIC_SetPriority(TIM2_IRQn, 8);
 ```
@@ -25,6 +26,7 @@ configMAX_SYSCALL_INTERRUPT_PRIORITY = 128 (tuong duong NVIC prio 8)
 ```
 - FreeRTOS quy định : Interrupt nào muốn gọi API “FromISR” phải có priority số lớn hơn (trong Cortex-M: số lớn = ưu tiên thấp)
 - ISR muốn gọi API FromISR → priority phải ≤ ưu tiên thấp, tức số priority ≥ configMAX_SYSCALL_INTERRUPT_PRIORITY
+  
 **4. Vì sao Mutex không phải Binary Semaphore?**
 - Mutex có: Priority inheritance , “Owner” (chỉ 1 task dùng 1 thời điểm )
 - Binary semaphore KHÔNG có 2 tính chất này
@@ -45,6 +47,7 @@ configMAX_SYSCALL_INTERRUPT_PRIORITY = 128 (tuong duong NVIC prio 8)
 - Cứ mỗi 1s:  xin UART mutex , in dòng “System OK” , Nếu mutex bận → đợi tối đa 100ms
 - Nếu semaphore không được trả trước 100 ms, timeout xảy ra. FreeRTOS chuyển task từ **Blocked → Ready**
 - Scheduler phải duyệt priority và chọn trong các task đã READY.
+  
 **3. Task_ADC – Priority = 1**
 - Cứ mỗi 1s: đọc ADC 8 lần , average , gửi UART (qua mutex), ADC đọc delay 2ms mỗi sample → tổng 16ms
 
