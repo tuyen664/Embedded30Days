@@ -25,7 +25,7 @@
   - Bật Counter Enable (CEN) - bộ đếm bắt đầu tăng TIM2->CR1 |= (1<<0);
   - Bật ngắt TIM2 trong NVIC : NVIC_EnableIRQ(TIM2_IRQn);
 
-**2.Khi nhấn nút Reset**
+**2. Khi nhấn nút Reset**
   
   - Cứ mỗi 0.5s là CPU lại nhảy vào ngắt TIM2 , cụ thể là hàm void TIM2_IRQHandler(void) 
   - Mỗi khi đếm tràn , bit 0 (UIF-Update Interrupt Flag) của thanh ghi SR (Status Register)
