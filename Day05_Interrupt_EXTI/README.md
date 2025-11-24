@@ -5,7 +5,7 @@
 
 ## Giải thích
 
-1. **Cấu hình GPIO**
+**1. Cấu hình GPIO**
 
  - Trước tiên bật clock cho GPIOA ,GPIOC , đặc biệt là **Alternate Function**  
  - RCC->APB2ENR |= (1 << 2) | (1 << 4) | (1 << 0);
@@ -15,7 +15,7 @@
  + Input  : MCU nhận tín hiệu từ ngoài (Nút nhấn, cảm biến, UART RX, v.v)
  - GPIOA->ODR |=  (1 << 1);    
 
-2. **Cấu hình EXTI cho PA1**
+**2. Cấu hình EXTI cho PA1**
 
  - Kết nối EXTI1 với PA1 : AFIO->EXTICR[0] &= ~(0xF << 4);  // clear mapping EXTI1
  - AFIO có bộ thanh ghi EXTICR[0...3] để chọn port nguồn cho các EXTI lines
@@ -23,6 +23,7 @@
  -> EXTI1 bits [7:4] của EXTICR[0]
  - AFIO->EXTICR[0] |=  (0x0 << 4);  // chon port A (0b0000) 
  -> 0b0001 = port B , 0b0010 = port C ,...
+   
  **Ví dụ muốn nối EXTI1 với PB1** : AFIO->EXTICR[0] |= (0x1 << 4); // chọn Port B cho EXTI1
  
  -  EXTI->IMR  |= (1 << 1);   // Unmask line 1 -> cho phep line 1 phat ngat
@@ -44,7 +45,7 @@ kích hoạt (1->0->1)
  - NVIC :Bộ điều khiển ngắt trung tâm quản lý ngắt từ EXTI, USART, Timer, ADC...và ưu tiên
   xử lý chúng
 
-3. **Hàm xử lý ngắt**
+**3. Hàm xử lý ngắt**
 
  - khi ta nhấn PA1 thì kích hoạt ngắt , CPU sẽ **tự động** nhảy vào hàm 
   **void EXTI1_IRQHandler(void)** - đây là tên mặc định đã cấu hình sẵn
