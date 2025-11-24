@@ -42,6 +42,7 @@ vTaskDelay(800);
 ```
 - Thử lấy mutex trong 100ms , in ra chuỗi , trả mutex, delay 800ms
 - Nếu Task_ADC giữ mutex quá lâu → Sensor có thể bị timeout → không in ra UART
+  
 **2. Task_Status**
 ```c
 static void Task_Status(void *pvParameters)
@@ -97,10 +98,12 @@ static void Task_ADC(void *pvParameters)
 - Ta có thể xóa dòng này : ADC1->CR2 |= (1U << 22); trong readADC();
 - ADC chạy ở 12 MHz (PCLK2/6) → nằm trong giới hạn (0.6–14 MHz)
 - Sample time dài = loại nhiễu tốt hơn nhưng tăng thời gian chuyển đổi → chỉ đúng trong bài test sensor chậm.
+  
 **2. Các lỗi tiềm ẩn**
 - Không dùng DMA cho ADC : Task_ADC phải chờ từng sample → CPU tốn thời gian -> dùng DMA + task đọc buffer
 - UART gửi từng byte → chậm -> Nên viết hàm gửi buffer non-blocking hoặc dùng interrupt TX
 - Mutex không nên giữ quá lâu : Nếu ta đặt snprintf() quá nặng → có thể gây block các task khác.
+  
 **3. Quan trọng**
 - Các delay trong init hardware: Clock config , PLL lock , Flash latency , Reset peripheral , ADC calibration , USART enable ổn định , Sensor init
 → **luôn phải dùng delay dạng busy-wait**, không được dùng FreeRTOS delay
