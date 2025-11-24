@@ -28,7 +28,8 @@ void CS_Deselect(GPIO_TypeDef* port, uint8_t pin)
     CS_HIGH(port,pin);
 }
 ```
-- **GPIO_TypeDef** là struct mô tả toàn bộ thanh ghi của 1 port GPIO
+
+**GPIO_TypeDef** là struct mô tả toàn bộ thanh ghi của 1 port GPIO
 - GPIO_TypeDef mô tả layout hardware → code đọc/ghi chính xác vào đúng offset
 - Địa chỉ ngoại vi hardware được ánh xạ vào RAM → MCU đọc ghi trực tiếp vào địa chỉ
 - Dùng con trỏ để trỏ được đến mọi GPIO
@@ -155,7 +156,6 @@ while (SPI1->SR & SPI_SR_BSY)
 ```
 - Đảm bảo shift register đã hoàn tất truyền bit cuối cùng
 - Khi dùng nhiều SPI liên tiếp, BSY=1 mà gửi tiếp → byte cũ bị ngắt quãng
-- 
 
 **7. Lưu ý quan trọng**
 - SPI có 3 buffer khác nhau:
@@ -178,11 +178,13 @@ while (SPI1->SR & SPI_SR_BSY)
 - rxBuf → mảng nhận dữ liệu (có thể NULL nếu không quan tâm dữ liệu trả về)
 - len → số byte cần truyền
 - csPort / csPin → chân chip select (slave nào được chọn)
+  
 **1.Chọn slave trước khi truyền**
 - CS_Select(csPort,csPin);
 - Kéo CS xuống LOW → Slave được chọn
 - Lưu ý : Nếu quên kéo CS xuống → Slave không nhận dữ liệu → SPI truyền vô ích
 - **CS phải kéo LOW trước byte đầu tiên, và phải thả HIGH sau byte cuối cùng**
+  
 **2.Vòng lặp truyền từng byte**
 ```c
 for(uint16_t i=0; i<len; i++)
@@ -239,10 +241,12 @@ void DMA1_Channel2_IRQHandler(void)  // RX
 - IFCR = Interrupt Flag Clear Register
 - Ghi CTCIF2 = Clear Transfer Complete Flag for channel 2
 - Nếu không clear → handler sẽ bị gọi lại liên tục
+  
 **3. spiTransferDone = 1;**
 - Đây là biến global, báo cho main loop hoặc hàm DMA polling rằng dữ liệu đã sẵn sàng đọc.
 - Biến này nên khai báo volatile để compiler không tối ưu, vì nó thay đổi trong ISR
-- Nếu không khai báo volatile, compiler có thể “giả sử” giá trị không đổi trong main loop → bug rất khó nhận ra.
+- Nếu không khai báo volatile, compiler có thể “giả sử” giá trị không đổi trong main loop → bug rất khó nhận ra
+  
 **4. Check TEIF**
 - TEIF = transfer error , TEIF = báo lỗi transfer, không phải lỗi MCU
 - Chỉ clear flag trong IRQ để ngăn IRQ lặp vô hạn. TEIF chỉ là báo lỗi, còn việc ISR nhảy là do TEIE + TEIF = 1 hoặc cả hai
@@ -274,7 +278,7 @@ void DMA1_Channel3_IRQHandler(void)  // TX
 - Xóa cờ bằng IFCR
 - KHÔNG cần set flag báo main loop, vì main loop chỉ quan tâm RX DMA, TX DMA full-duplex → TX xong đồng thời RX cũng xong.
 
-** Lưu ý quan trọng**
+**Lưu ý quan trọng**
 
 - ISR chỉ có check cờ + clear cờ → nhanh → không cần disable NVIC.
 - Nếu ISR dài → cần NVIC_DisableIRQ để tránh race condition.
@@ -305,7 +309,7 @@ CS_Select(csPort,csPin);
 - CS_Select kéo CS xuống 0, chọn slave → bắt đầu SPI transmission
 - Nếu kéo CS sai thời điểm, slave có thể bỏ byte đầu tiên → lỗi dữ liệu.
 
-**2.Cấu hình TX DMA**
+**2. Cấu hình TX DMA**
 ```c
 SPI_DMA_TX_CH->CCR = 0;            // reset config
 SPI_DMA_TX_CH->CPAR = (uint32_t)&(SPI1->DR); // Peripheral addr = SPI DR
@@ -339,7 +343,8 @@ SPI_DMA_RX_CH->CCR |= (1 << 0)   // EN
 
 **4. Bật DMA trong SPI**
 - SPI1->CR2 |= SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN;
-- Nếu quên, DMA sẽ chạy nhưng SPI không tự động lấy dữ liệu → TX/RX không hoạt động.
+- Nếu quên, DMA sẽ chạy nhưng SPI không tự động lấy dữ liệu → TX/RX không hoạt động
+  
 **5. Bật NVIC cho ngắt DMA**
 ```c
 NVIC_EnableIRQ(DMA1_Channel2_IRQn);
@@ -347,8 +352,9 @@ NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 ```
 - RX DMA = Channel 2 → ISR sẽ set spiTransferDone = 1
 - TX DMA = Channel 3 → ISR chỉ clear cờ
-- Nếu quên NVIC, DMA vẫn chạy, nhưng ISR không gọi → spiTransferDone không set → loop chờ treo.
-**6.Chờ RX DMA hoàn thành**
+- Nếu quên NVIC, DMA vẫn chạy, nhưng ISR không gọi → spiTransferDone không set → loop chờ treo
+  
+**6. Chờ RX DMA hoàn thành**
 ```c
 uint32_t timeout = SPI_TIMEOUT*10;
 while(!spiTransferDone && !spiError)
@@ -358,26 +364,30 @@ while(!spiTransferDone && !spiError)
 - Timeout = bảo vệ tránh treo nếu DMA lỗi
 - Không chờ RX → dữ liệu chưa đầy đủ → main loop đọc buffer bị lỗi
 - Timeout = “safety net” trong sản xuất, tốt hơn dùng semaphore/RTOS event
-**7.Tắt DMA và thả CS** 
+  
+**7. Tắt DMA và thả CS** 
 ```c
 SPI1->CR2 &= ~(SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN);
 CS_Deselect(csPort,csPin);
 ```
 - Tắt DMA → tránh ISR không cần thiết
 - CS_Deselect kéo CS lên 1 → kết thúc giao tiếp slave
-- luôn tắt DMA trước khi thả CS, nếu không, slave có thể nhận thêm byte rác.
+- luôn tắt DMA trước khi thả CS, nếu không, slave có thể nhận thêm byte rác
+  
 **8. Lưu ý quan trọng**
 - CS phải kéo trước TX DMA enable
 - CS phải thả sau khi DMA tắt
 - Sai thứ tự → slave bỏ byte đầu hoặc nhận byte thừa
 - DMA MINC : nếu không, pointer memory không tăng → tất cả dữ liệu vào/ra cùng 1 địa chỉ
+  
  
-##2.7 SCK
+## 2.7 SCK
 **1. SCK điều khiển thời điểm dữ liệu hợp lê**
 
 - SCK = Serial Clock – xung nhịp do master tạo ra để điều khiển việc truyền dữ liệu giữa master và slave.
 - Dữ liệu của SPI không hợp lệ liên tục, mà chỉ hợp lệ tại cạnh lên hoặc cạnh xuống của SCK (tùy mode).
-- SPI có 4 mode dựa vào CPOL và CPHA 
+- SPI có 4 mode dựa vào CPOL và CPHA
+  
 **2. CPOL và CPHA**
 - CPOL = 0 → SCK nhàn rỗi ở mức thấp (Idle = Low)
 - CPOL = 1 → SCK nhàn rỗi ở mức cao (Idle = High)
@@ -406,6 +416,7 @@ CS_Deselect(csPort,csPin);
 - Nhiễu trên đường SCK = lỗi SPI ngẫu nhiên
 - Dây SCK dài quá → méo xung -> cần giảm tốc độ hoặc thêm trở 33–100Ω
 - Một số slave chỉ nhận dữ liệu khi SCK có duty chuẩn 50% (Thời gian HIGH = 50% chu kỳ ,Thời gian LOW = 50% chu kỳ )
+  
 ## 2.8 Vòng lặp chính
 - Hàm thực hiện 4 việc chính :
 - Khởi tạo toàn bộ phần cứng (LED, SPI1, chân CS)
@@ -422,6 +433,7 @@ CS_Init(SPI1_CS2_PORT,SPI1_CS2_PIN);
 ```
 - Bật clock, cấu hình GPIO, cấu hình SPI1.
 - Hai chân CS điều khiển hai “thiết bị slave SPI khác nhau”
+  
 **2. Khai báo buffer TX/RX**
 ```c
 static uint8_t tx1[8] = {...};
