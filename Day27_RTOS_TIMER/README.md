@@ -37,6 +37,7 @@ static void vTimerCallback_LED(TimerHandle_t xTimer)
 }
 ```
 - Mỗi 1 giây → đảo trạng thái LED.
+  
 **2.vTimerCallback_UART()**
 ```c
 static void vTimerCallback_UART(TimerHandle_t xTimer)
@@ -45,6 +46,7 @@ static void vTimerCallback_UART(TimerHandle_t xTimer)
 }
 ```
 - Mỗi 1 giây → in một dòng UART
+  
 **3.vTimerCallback_UART2()**
 ```c
 static void vTimerCallback_UART2(TimerHandle_t xTimer)
@@ -61,6 +63,7 @@ static void vTimerCallback_UART2(TimerHandle_t xTimer)
 **1. Software Timer KHÔNG chạy trong interrupt**
 - Software timer của FreeRTOS chạy KHÔNG phải trong ISR
 - Nó chạy trong Timer Service Task, chính là 1 task bình thường
+  
 **2. Tất cả timer share cùng 1 task!**
 - Ta có 3 timer → nhưng thực tế chỉ 1 task duy nhất xử lý chúng
 - Nếu 1 callback chạy lâu → 2 callback còn lại bị delay
@@ -73,6 +76,7 @@ static void vTimerCallback_UART2(TimerHandle_t xTimer)
 - Nếu tick = 1ms → có nghĩa là timer service task đang bận 6 tick liên tục
 - Kéo theo Timer callback khác bị delay
 - Task khác thấp hơn priority có thể bị block
+  
 **4. Timer callback KHÔNG bao giờ được block**
 - không được vTaskDelay() , xSemaphoreTake(block) , xQueueReceive(block) , hay bất kì hàm block nào
 - Vì ta sẽ block luôn **timer service task**, làm toàn bộ timer chết theo
@@ -80,14 +84,18 @@ static void vTimerCallback_UART2(TimerHandle_t xTimer)
 **5. Ta đang dùng parameter = 0 (NULL)**
 - xTimerCreate(... , 0 , ...); → nghĩa là ta không truyền ID cho timer.
 - Trong project thật : Timer thường được dùng để quản lý nhiều object → ID cực kỳ quan trọng
+  
 **6. UART gửi trong callback = không tốt**
 - Cách đúng :  Callback chỉ gửi 1 message vào queue UART -> Task UART gửi thật
+  
 **7. Nguyên tắc: 1 peripheral = 1 task xử lý**
 - Ta đang viết thẳng vào USART1->DR trong callback timer → đây là race-condition nếu có nhiều task cùng gửi UART.
 - cách chuẩn : Một task UART duy nhất -> gộp cả 2 uart vào 1
+  
 **8.timer sẽ bị trễ**
 - Software Timer không có độ chính xác tuyệt đối
-- Chỉ đảm bảo: “thực thi càng sớm càng tốt khi timer task được chạy” 
+- Chỉ đảm bảo: “thực thi càng sớm càng tốt khi timer task được chạy”
+  
 **9. Timer callback chạy với priority của Timer Task**
 - Priority = configTIMER_TASK_PRIORITY
 - Nếu ta để priority rất cao → callback sẽ giật CPU của các task khác.
@@ -160,34 +168,6 @@ else
     while (1); // stop system
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## Ảnh chụp 
