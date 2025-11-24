@@ -1,4 +1,4 @@
-## Mục tiêu bài học
+## Mục tiêu
 
 Cấu hình PA1 làm  **nút nhấn**  , biết cách **chống dội** khi nhấn nút 
 
@@ -8,7 +8,7 @@ Cấu hình PA1 làm  **nút nhấn**  , biết cách **chống dội** khi nh�
 
 
 ## Giải thích code hoạt động
-1. **Cấu hình GPIO**
+**1. Cấu hình GPIO**
 
 - Cấu hình PC13 là chân nháy led , output push-pull 50MHz
 
@@ -21,7 +21,7 @@ PA1 bị nhiễu , dao động ngẫu nhiên giữa 0 và 1 -> vi điều khiể
 Nên dùng pull-down hoặc pull-up.
 - Cấu hình SysTick cứ 1ms là kích hoạt COUNTFLAG 
 
-2.  **Hoạt động hàm chính**
+**2. Hoạt động hàm chính**
  - Khởi tạo : 
       GPIO_Config();
       GPIO_ResetBits(GPIOC, GPIO_Pin_13);  // LED sáng (active low)
