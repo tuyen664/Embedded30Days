@@ -1,6 +1,24 @@
-## Mục tiêu 
+## Giới Thiệu
+
+- Dự án minh họa cách cấu hình SPI1 ở chế độ Master trên STM32F103, bao gồm:
+- Truyền nhận nhiều byte bằng **polling**
+- Truyền nhận nhiều byte bằng **DMA**
+- Điều khiển nhiều chân Chip Select (CS) bằng GPIO
+- Debug lỗi cơ bản thông qua LED báo trạng thái
+Mục tiêu: Hiểu rõ luồng hoạt động **SPI + DMA** chuẩn trong nhúng
 
 ## Phần cứng sử dụng
+- **MCU:** STM32F103C8T6 (Blue Pill hoặc tương đương)
+
+- **SPI1 pins:**
+- PA5 – SCK
+- PA6 – MISO
+- PA7 – MOSI
+- **Chip Select:**
+- CS1 → PA4
+- CS2 → PA3
+  
+**LED báo lỗi:** PC13
 
 
 ## 1. CS TRONG SPI
