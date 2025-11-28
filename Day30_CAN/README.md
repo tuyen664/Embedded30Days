@@ -1,3 +1,9 @@
+# Tổng quan 
+
+TX: CPU → TX mailbox → bus
+RX: bus → filter → FIFO → IRQ → ring buffer → CPU
+
+
 ## Tổng Quan kiến thức về CAN
 
 **1. CAN hoạt động thế nào?**
@@ -49,7 +55,7 @@ TDHR = b4 | b5<<8 | b6<<16 | b7<<24
 
 
 
-**Ví dụ đầy đủ gửi 0x321 với 8 bytes**
+**Ví dụ thô sơ gửi 0x321 với 8 bytes**
 
 ```c
 CAN_TxMailBox_TypeDef *mb = &CAN1->sTxMailBox[0];
@@ -70,6 +76,9 @@ mb->TDHR = (0xAA) |
 mb->TIR |= CAN_TI0R_TXRQ;   // Trigger send
 ```
 
+- mb = &CAN1->sTxMailBox[0]; -> mailbox truyền số 0  (có 3 mailbox truyền)
+- Tránh nhầm lẫn RX FIFO : CAN1->sFIFOMailBox[0]   // FIFO0  , CAN1->sFIFOMailBox[1]   // FIFO1
+ 
 **Các lỗi phổ biến**
 - ID không shift lên 21 : Frame bị hỏng
 - Len > 8 : Frame invalid, không gửi
@@ -84,31 +93,44 @@ mb->TIR |= CAN_TI0R_TXRQ;   // Trigger send
 
 **3. Frame type**
 - Data Frame : Gửi dữ liệu
-- Remote Frame : Yêu cầu node khác gửi Data Frame
-- Error Frame : Tự sinh khi lỗi bus
+- Remote Frame : Yêu cầu node khác gửi Data Frame -> ít dùng
+- Error Frame : Tự sinh khi lỗi bus -> Node không tự code tạo ra, bộ điều khiển CAN tự gửi trên bus
+- Phải tự xử lý trong : if (CAN1->MSR & CAN_MSR_ERRI) ...
 - Overload Frame : Trì hoãn bus (hiếm dùng)
+-> 99% thời gian chỉ dùng Data Frame , Hardware tự xử lý **error frame và overload frame**, Remote Frame chỉ dùng trong các hệ CAN cổ
 
 **5. Tốc độ CAN = (fPCLK) / (BRP × TQ)**
-- **TQ = 1 + TS1 + TS2** // Tổng TQ trên 1 bit , số 1 đầu tiên là SYNC_SEG = 1 TQ (luôn luôn là 1) , để đồng bộ bit đầu mỗi bit
+- **TQ = 1 (Sync Seg) + TS1 + TS2** // Tổng TQ trên 1 bit , số 1 đầu tiên là SYNC_SEG = 1 TQ (luôn luôn là 1) , để đồng bộ bit đầu mỗi bit
 - UART: mỗi bit = 1 xung clock của baudrate.
 - CAN: mỗi bit = gồm nhiều Time Quanta (TQ)
 -> CAN lấy clock gốc rồi chia nhỏ thành các đơn vị siêu nhỏ gọi là Time Quanta , sau đó ghép lại thành 1 bit.
-- Tốc độ CAN = PCLK / (BRP × TQ)  // BRP = độ chia clock
+- Tốc độ CAN = PCLK / (BRP × TQ)  // độ chia clock = BRP +1
 - TS1 tạo sample point , TS2 chỉnh pha
 
 **Tại sao phải chia bit thành nhiều TQ?**
 
 - Đồng bộ : CAN là multi-master, nhiều node → nhiều dao động clock khác nhau. Phải có vùng SYNC để sửa sai pha
 
-- Lấy mẫu (Sampling Point) : Điểm lấy mẫu phải nằm gần 80% của bit → Vì vậy TS1 luôn dài
-- Chỉnh pha : Phần cứng thay đổi TS2/TS1 nhỏ để xử lý jitter, nhiễu, lệch clock
+- Lấy mẫu (Sampling Point) : Điểm lấy mẫu phải nằm 75% - 87.5% thời gian của bit 
+- Thời gian "chuẩn bị" để lấy mẫu , Sampling point = cuối TS1
+- TS2 chính là khoảng thời gian ổn định sau sampling point để CAN kiểm tra lỗi & đồng bộ lại bit
 
 - Thực tế: TS1 lớn gấp 3–4 lần TS2
+- SJW hoạt động trong TS2 để điều chỉnh timing khi Một node bị trễ clock , Hoặc phát hiện edge jitter
+- CAN sẽ "dời" bit tới ±SJW TQ (SJW ≤ TS2)
 
 **6. Một Frame = nhiều bit**
 - Thường ở phần mềm không thấy
 - Ta thường nghĩ CAN = “gửi 8 byte” -> Không đúng — thực tế frame có chuỗi bit phức tạp
-- SOF → ID → RTR → IDE → DLC → DATA → CRC → ACK → EOF
+- SOF → ID → RTR → IDE → DLC → DATA → CRC → ACK → EOF (thô sơ , chưa thật đầy đủ)
+- DLC LÀ con số báo số byte data phía sau , KHÔNG chứa dữ liệu . DATA = vùng chứa dữ liệu thật sự 
+- SOF – Start of Frame (1 bit) : luôn bằng 0 -> báo hiệu 1 frame mới , nếu bus bận không có SOF
+- Arbitration Field (ID + RTR + IDE) : RTR (Remote/Data) : Node nào ID thấp (ưu tiên cao) sẽ thắng quyền truy cập bus
+- CRC Field : dùng để kiểm tra lỗi bit , đồng bộ giữa các node
+- ACK Field : Node gửi → gửi bit ’1’ vào ACK Slot , Node nhận → nếu OK, kéo bit xuống ‘0’
+- Nếu không có ai ACK → Node gửi sẽ báo lỗi và phát lại frame
+- EOF – End of Frame (7 bit là 1 ) : Thời gian bus “nghỉ” để chuẩn bị cho frame tiếp theo
+- **Bit stuffing** : Nếu có 5 bit liên tiếp giống nhau, CAN tự chèn 1 bit đảo để giữ đồng bộ
 
 **7. CAN có lỗi tự phục hồi (tính năng bá đạo nhất)**
 - MCU duy trì 2 counter: TEC (Transmit Error Counter) , REC (Receive Error Counter)
@@ -123,10 +145,20 @@ mb->TIR |= CAN_TI0R_TXRQ;   // Trigger send
 
 - A. ERROR ACTIVE (trạng thái bình thường) (TEC < 128 và REC < 128)
 - Được gửi Error Frame mạnh (dominant bit) , Gửi và nhận bình thường
+- Active Error Frame = 6 bit 0 dominant → bus bắt buộc nhận lỗi, frame hủy ngay lập tức.
 - B. ERROR PASSIVE (cảnh báo) (TEC >= 128 OR REC >= 128)
 - Không được phép làm nhiễu bus → Chỉ được gửi Error Frame ở mức yếu hơn
 - C. BUS OFF (node bị đuổi khỏi mạng) (TEC > 255)
 - Node bị ngắt kết nối khỏi bus CAN , Không được gửi, không được nhận , Không được ACK ai
+
+**Quá trình khi Error Frame mạnh**
+- Ví dụ lỗi CRC: 
+
+1. Node nhận phát hiện CRC sai
+2. Node này phát 6 bit 0 dominants
+3. Tất cả node trên bus ngưng truyền ngay
+4. Frame hiện tại bị hủy
+5. Node gửi lại frame đó sau một khoảng thời gian intermission
 
 **CƠ CHẾ TỰ HỒI PHỤC**
 
@@ -143,7 +175,6 @@ mb->TIR |= CAN_TI0R_TXRQ;   // Trigger send
 - Không bật filter → không nhận gì.
 - Không thoát INIT filter → filter không hoạt động.
 - Mask = 0 → nhận tất cả.
-- Mask = 0xFFFF → không nhận gì (unless ID = 0xFFFF)
 - Gán filter vào FIFO0 hoặc FIFO1 phải đúng.
 - Filter scale phải đúng 32-bit nếu dùng Standard ID 11 bit.
 
@@ -186,28 +217,55 @@ mb->TIR |= CAN_TI0R_TXRQ;   // Trigger send
 **Vì sao cần tận 3 mailbox?**
 - Ta gửi frame 1 → CAN đang arbitration và chưa phát
 - Trong thời gian đó Ta muốn gửi frame 2 → KHÔNG CÓ CHỖ ĐỂ BỎ nếu chỉ có 1 mailbox
--> → Dữ liệu không thể xếp hàng như UART FIFO
+→ Dữ liệu không thể xếp hàng như UART FIFO
 
 **Lỗi dễ mắc phải**
 - Không kiểm tra TME → ghi đè mailbox đang bận
 - Không set TXRQ → mailbox không bao giờ gửi
 - Ghi TIR rồi TXRQ ngay → ID chưa có giá trị chuẩn : TIR (ID, RTR, IDE) , TDTR , TDLR/TDHR , **TXRQ cuối cùng**
-- Nếu ta không set IDE=0 cho Standard → phần cứng hiểu Extended ID -> Ghi TIR = 0 trước → rồi mới set ID
+- Nếu ta không set IDE=0 cho Standard → phần cứng hiểu Extended ID . Do đó Ghi TIR = 0 trước → rồi mới set ID
 - Không xử lý lỗi TXOK/ALST/ TERR 
 - Không clear mailbox sau khi gửi : TXRQ tự clear khi frame bắt đầu gửi → nhưng TXOK phải đọc TSR để clear cờ lỗi
 
 
-**11. Loopback mode = “test offline không cần transceiver” 
+**11. Loopback mode “test không cần transceiver” 
 - Phát → tự nhận
 - Rất tiện để test code CAN
 
 **12. CAN không có "buồng chờ" dài**
 - Bus luôn busy → Ta không thể gửi liên tục 1ms như UART
-- Nếu gửi quá nhanh → arbitration thua → mailbox luôn bận
+- Nếu gửi quá nhanh → arbitration của node khác luôn thua → mailbox luôn bận -> không gửi thêm được
+
+**CAN không thể bảo đảm gửi đúng chu kỳ do:**
+
+- Bus đa truy cập → arbitration
+- Chỉ có 3 slot TX
+- Bus có thể bận bất cứ lúc nào
+- Không phải cứ gửi lệnh là sẽ vào bus ngay
+=> Không giống UART, CAN KHÔNG đảm bảo tần số gửi cố định
 
 **13. Bit-stuffing — nguyên nhân khiến oscilloscope nhiễu**
-- Nếu 5 bit cùng mức liên tiếp → nhét thêm 1 bit nghịch
-- Rất quan trọng khi debug bằng oscilloscope
+- Nếu 5 bit cùng mức liên tiếp → nhét thêm 1 bit nghịch để : 
+- Đồng bộ clock giữa các node
+- Tránh mất đồng bộ bit sampling
+- Tránh lỗi khi một node giữ mức liên tục quá lâu
+
+**Ví dụ chuỗi gốc :**
+
+- 00000 0 110111  →  Có 5 số 0 liên tiếp
+- CAN sẽ tự nhét:
+
+00000 **1** 0 110111
+        ↑ bit-stuff
+
+- Oscilloscope bị "nhiễu" do dạng sóng CAN bị tăng/giảm bất ngờ vì bit-stuffing
+-> CAN không có dạng sóng đẹp như UART, mà “răng cưa hơn”
+
+**Khi debug CAN bằng oscilloscope**
+
+- Không đếm số bit để đo bitrate! Vì bit-stuffing làm thay đổi độ dài frame
+- Chỉ đo thời gian 1 bit trên đường bus (Zoom lớn vào 1 bit duy nhất)
+- Nếu muốn xem nội dung frame → dùng logic analyzer hỗ trợ CAN (Saleae, DSLogic)
 
 **14. CAN không cần master**
 - Node nào cũng có quyền gửi
@@ -235,8 +293,6 @@ mb->TIR |= CAN_TI0R_TXRQ;   // Trigger send
 - UART : Sai dữ liệu → không hề phát hiện được
 
 
-
-
 ## Giải thích các hàm 
 
 ### UART1_TxHex8()
@@ -253,8 +309,9 @@ static void UART1_TxHex8(uint8_t v)
 - v & 0xF : giữ 4 bit thấp , 0xAB & 0x0F = 0x0B → index 11 → ký tự 'B'
 - const char *h = "0123456789ABCDEF" -> Mảng tra cứu 16 ký tự -> index nào là ra ký tự HEX tương ứng
 - Ta dùng chuỗi mà không dùng số là do 'A' != 10 , 'B' != 11  , 'A' = 0x41 (65 decimal) -> ký tự ASCII không liền với số 10–15
-- Không phải mỗi lần gọi hàm là nó tạo mới chuỗi h , nó nằm trong Flash , không bị tạo lại , không tốn ram
- 
+- chuỗi "0123456789ABCDEF" : tạo 1 lần duy nhất , trong Flash ROM
+- Con trỏ h : tạo mỗi lần gọi hàm , trong stask
+- Nếu muốn h tạo đúng 1 lần thêm Static
 
 ### CAN_GPIO_Init()
 ```c
@@ -287,7 +344,7 @@ RCC->APB1RSTR &= ~RCC_APB1RSTR_CAN1RST;
 ```
 - Reset trước khi bắt đầu là bất buộc khi làm việc mức thanh ghi
 - 1 → kích reset (pulse tác động vào mạch reset) -> tín hiệu điều khiển phần cứng
-- Set = kích reset , lear = nhả reset, cho module hoạt động trở lại ,Nếu không clear → peripheral chết luôn
+- Set = kích reset , lear = nhả reset, cho module hoạt động trở lại , Nếu không clear → peripheral chết luôn
 
 
 **3. Vào Init Mode**
@@ -341,13 +398,13 @@ CAN1->MCR |= CAN_MCR_ABOM;  // Auto bus-off recovery
 - Nếu tắt Retransmit → frame lỗi biến mất, rất khó debug
 - Nếu tắt Bus-Off Recovery → chỉ bật nguồn lại mới phục hồi
 
-**7. Cấu hình Filter – nhận tất cả**
+**7. Cấu hình Filter – RX nhận tất cả**
 ```c
  CAN1->FMR |= CAN_FMR_FINIT;  // vào filter init mode
  CAN1->FA1R = 0;              // disable filter 0
  CAN1->FM1R &= ~(1 << 0);     /* dua ve mask mode */
  CAN1->FS1R |=  (1 << 0);     /* 32-bit */
- AN1->FFA1R &= ~(1 << 0);    // FIFO 0
+ CAN1->FFA1R &= ~(1 << 0);    // filter 0 → FIFO0
  CAN1->sFilterRegister[0].FR1 = 0; // ID    ((0x100 << 21);)
  CAN1->sFilterRegister[0].FR2 = 0; // mask = 0  (FR2 = (0x7FF << 21); )
  CAN1->FA1R |= (1 << 0);           // enable filter 0
@@ -371,6 +428,17 @@ CAN1->sFilterRegister[0].FR2 = 0; // MASK = 0
 -> nhận toàn bộ ID từ 0x100 đến 0x1FF (chỉ 3 bit đầu bị so sánh giống hết , các bit khác tùy ý)
 - Muốn nhận tất cả ID chẵn → mask 0x001 , filterID = 0
 - Muốn nhận tất cả ID lẻ → mask 0x001 và filterID = 1
+
+```c
+ CAN1->FFA1R &= ~(1 << 0);    // filter 0 nhận frame → đẩy vào FIFO0
+```
+```c
+CAN1->FFA1R |= (1 << 0);  // filter 0 → FIFO1
+```
+```c
+CAN1->FFA1R |= (1 << 1);  // filter 1 → FIFO1
+```
+
 ```c
 CAN1->FS1R |= (1 << 0);  
 ```
@@ -402,8 +470,8 @@ while (CAN1->MSR & CAN_MSR_INAK)
 CAN1->IER |= CAN_IER_FMPIE0;
 NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
 ```
-- Bật ngắt khi có số lượng frame mới (FMP0)
-- Chạy vào handler: USB_LP_CAN1_RX0_IRQHandler
+- RX interrupt kích hoạt khi có frame mới vào FIFO
+- Chạy vào handler: USB_LP_CAN1_RX0_IRQHandler cần vòng **while** để xử lý hết tất cả frame trong FIFO
 
 **11. Tóm tắt quy trình**
 1. Bật clock
