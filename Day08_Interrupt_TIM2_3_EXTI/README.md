@@ -1,7 +1,7 @@
 ## Mục tiêu
 
  - Thiết kế ngắt EXTI1 cho nút nhấn PA1
- - Thiết kế ngắt TIM2 để điều khiển tốc độ nháy của LED , 2 chu kì là 500ms và 1000ms
+ - Thiết kế ngắt TIM2 để điều khiển tốc độ nháy của LED , 2 chu kì là 200ms và 1000ms
  - Thiết kế ngắt TIM3 thay hàm Delay_ms để chống dội cho nút nhấn 
 
 ## Giải thích
@@ -23,7 +23,7 @@
 - Sau khi kiểm tra lại if (EXTI->PR & (1<<1)) ta đóng ngắt EXTI1 tránh nhiễu gây ngắt liên tục
 
 - Biến speed_mode = !speed_mode; (ban đầu speed_mode = 0 , sau lần 1 nhấn là 1, lần 2 là 0,... )
-- khi speed_mode = 1 thì LED nháy chu kì là 500ms (khi ghi câu lệnh TIM2->ARR = 5000; ta phải nhân 10
+- khi speed_mode = 1 thì LED nháy chu kì là 200ms (khi ghi câu lệnh TIM2->ARR = 2000; ta phải nhân 10
 lên vì 1tick / 0.1ms)
 - Khi speed_mode = 0 thì LED nháy chu kì là 1s
 - Sau đó ta phải lập tức đưa TIM2->CNT = 0; vì có thể count đang đếm trong chu kì mặc định
