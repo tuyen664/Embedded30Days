@@ -1,6 +1,6 @@
 ## Mục tiêu
 
-Cấu hình PA1 làm  **nút nhấn**  , biết cách **chống dội** khi nhấn nút 
+Cấu hình PA1 làm  **nút nhấn** thay đổi trạng thái Led PC13 , biết cách **chống dội** khi nhấn nút 
 
 ## Phần cứng sử dụng
 **STM32F103
