@@ -147,7 +147,7 @@ mb->TIR |= CAN_TI0R_TXRQ;   // Trigger send
 - Gán filter vào FIFO0 hoặc FIFO1 phải đúng.
 - Filter scale phải đúng 32-bit nếu dùng Standard ID 11 bit.
 
-**9. FIFO0 + FIFO1 (đọc frame xong phải “release”)
+**9. FIFO0 + FIFO1 (đọc frame xong phải “release”)**
 
 - CAN1->RF0R |= CAN_RF0R_RFOM0;
 - Nếu quên → FIFO full → mất dữ liệu , Không nhận được bất cứ frame nào sau 3 frame đầu tiên
