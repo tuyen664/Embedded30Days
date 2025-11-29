@@ -125,5 +125,7 @@
  5. LED phản hồi theo lệnh
  6. Tất cả lệnh không phân biệt chữ hoa/thường
 
-## Ảnh chụp
+## Video
+
+https://drive.google.com/file/d/1GYgA9es8Y2YlVWhZWKtiL1ZgA81FbZ9p/view?usp=drive_link
 
