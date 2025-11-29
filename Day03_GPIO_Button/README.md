@@ -43,6 +43,7 @@ if (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1))
 
 - Tăng biến đếm lên , nếu là chẵn thì cho led on , nếu lẻ thì led off.
 
+## Debug
 
-## Ảnh chụp
+https://drive.google.com/file/d/1-e16S3Tl78Z0v151_nM45kagH3iIcHg1/view?usp=drive_link
 
