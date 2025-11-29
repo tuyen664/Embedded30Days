@@ -53,7 +53,9 @@
   + str++ → tăng con trỏ sang ký tự tiếp theo.
   + *str++ → lấy ký tự hiện tại, rồi trỏ sang ký tự kế tiếp.
 
-## Ảnh chụp
+## Video
+
+https://drive.google.com/file/d/1uZq0yKFUe4N7KZvOGeNX_iLPa_CYcotd/view?usp=drive_link
 
 
 
