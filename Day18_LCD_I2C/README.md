@@ -290,5 +290,7 @@ LCD_SendCmd(addr, 0x0C); // 0 0 0 0 1 D C B -> 1100
 - Rộng rãi, dễ triển khai -> Dễ nhiễu nếu dây dài
 
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/1Kctkg2CcfjU1ejqL_DQn6SoKbJJlGDpQ/view?usp=drive_link
 
