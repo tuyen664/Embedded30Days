@@ -92,5 +92,7 @@ portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 - Các task cần phản ứng thời gian thực với sự kiện ngoại vi → không dùng vTaskDelay, dùng semaphore/queue/event group từ ISR
 - Các task lặp định kỳ không cần chính xác cao → dùng vTaskDelay
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/1nygW7SdgM8CUbmVBJte24bGbpWGK7aih/view?usp=drive_link
 
