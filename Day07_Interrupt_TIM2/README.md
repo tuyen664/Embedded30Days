@@ -38,5 +38,7 @@
   - Toggle Led : GPIOC-> ODR ^= (1 << 13); 
 
 
-## Ảnh chụp
+## Video
+
+https://drive.google.com/file/d/18Ph7lqmNJ-cUMR9tILX5DuqIft54AYip/view?usp=drive_link
 
