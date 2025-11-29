@@ -82,4 +82,6 @@
  - Tạo hàm Delay_ms() :  Dùng biến start lưu biến sysTickMs ban đầu , sau mỗi ms biến này được tăng lên 1
  - Đợi đến khi khoảng thời gian cần delay đạt đến thì tự thoát hàm while ((sysTickMs - start) < ms)
 
-## Hình Ảnh 
+## Video
+
+https://drive.google.com/file/d/1NG-A0ib94KcPksw63WEEc4cpi-GyHb3K/view?usp=drive_link
