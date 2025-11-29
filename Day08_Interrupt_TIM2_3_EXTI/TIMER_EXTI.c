@@ -89,7 +89,7 @@ void EXTI1_IRQHandler(void)
         // Toggle blinking speed
         speed_mode = !speed_mode;
         if (speed_mode)
-            TIM2->ARR = 3000;     // Fast (500ms)
+            TIM2->ARR = 2000;     // Fast (200ms)
         else
             TIM2->ARR = 10000;     // Slow (1s)
 				

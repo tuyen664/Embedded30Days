@@ -7,6 +7,7 @@ void GPIO_ConfigPinC13(void)
 	RCC->APB2ENR |= 0x10 ; // enable GPIOC (Bit 4 in APB2ENR)
 	GPIOC->CRH &= 0xFF0FFFFF ; // Clear PC13
 	GPIOC->CRH |= 0x00300000; // 0011 -> push-pull / output mode , maxspeed 50 Mhz
+	GPIOC->BSRR |= (1<<13);
 
 }
 
