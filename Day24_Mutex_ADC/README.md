@@ -136,5 +136,7 @@ xQueueSendFromISR(queue, &value, &xHigherPriorityTaskWoken);
 -  "Binary Semaphore / Queue = ISR"
 
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/1gBAkOYztJRoKYXYK0bb97rnhrU50H6Z8/view?usp=drive_link
 
