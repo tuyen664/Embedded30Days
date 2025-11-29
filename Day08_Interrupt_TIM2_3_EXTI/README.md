@@ -34,5 +34,7 @@ lên vì 1tick / 0.1ms)
 - Trong này ta bật lại ngắt EXTI1 , reset lại TIM3->SR &= ~(1<<0); và stop TIM3 ,
  cho lần chống dội tiếp theo
 
-## Ảnh chụp
+## Video
+
+https://drive.google.com/file/d/1MBaXWbEgfXGHBhmZucf9DWP_Vo9dyR4C/view?usp=drive_link
 
