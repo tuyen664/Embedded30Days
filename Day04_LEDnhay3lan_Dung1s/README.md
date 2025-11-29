@@ -18,3 +18,7 @@ làm 1 lần đếm để đồng bộ với count
 
 - Chỉ có BSRR (32bit) mới có chức năng này 
 - BRR(16bit) không có , chỉ có GPIOC->BRR = (1 << 13); // led sáng
+
+## Video
+
+https://drive.google.com/file/d/1VaXhMV9LhQRVAT9JmiwpKmZ9XYB_kqYz/view?usp=drive_link
