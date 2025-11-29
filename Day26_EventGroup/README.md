@@ -108,5 +108,7 @@ for (;;)
 - 1 << 1 nếu Button event
 - hoặc cả hai: 0b00000011
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/1Ufo8KUIpQyb1aPNtdvYZM3mus0Xezzh8/view?usp=drive_link
 
