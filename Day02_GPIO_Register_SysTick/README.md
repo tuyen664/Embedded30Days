@@ -43,5 +43,6 @@ Nếu bit đó = 0 → chân xuất ra mức LOW (0V) -> led sáng
 - GPIOC->ODR ^= (1 << 13);
  → LED sẽ **bật/tắt luân phiên mỗi giây**
 
+## Debug
 
-## Ảnh chụp 
+https://drive.google.com/file/d/18_Bf5GfNuweNIKG-qmfBHDgh_rSmOnGv/view?usp=drive_link
