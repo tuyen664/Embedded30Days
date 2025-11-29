@@ -62,7 +62,9 @@ kích hoạt (1->0->1)
  có thể xóa nhầm khi dùng nhiều ngắt cùng lúc
 
 
-## Ảnh chụp
+## Video
+
+https://drive.google.com/file/d/1UX4Q1Op5CziT_kjOUEH1PbcvqfQ7NQPe/view?usp=sharing
 
 
 
