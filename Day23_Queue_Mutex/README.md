@@ -236,5 +236,7 @@ static void Task_Semaphore(void *pvParameters)
 - Semaphore dùng cho tài nguyên không chia sẻ được
 
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/1spu7CgHjAxTztkw_bPyNY6Koy_lhTDPE/view?usp=drive_link
 
