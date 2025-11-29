@@ -269,5 +269,7 @@ else if (idx < CMD_BUF_LEN - 1)
 
 
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/1-1TnSCz9u75L-Pm0Hda4DtvEIC83j7t9/view?usp=drive_link
 
