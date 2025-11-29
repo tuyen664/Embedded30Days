@@ -253,5 +253,7 @@ for(;;)
 - Điều này giúp task thấp hoàn thành nhanh công việc và trả mutex, task cao sẽ chạy tiếp sớm hơn.
 
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/17KhQVlHO0ImcQLAzZ_8wkNhY3-68eOni/view?usp=drive_link
 
