@@ -173,5 +173,9 @@ else
 ```
 
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/1wqPuijLueDVyCNDxMF8ILJebT5xPMyun/view?usp=drive_link
+
+
 
