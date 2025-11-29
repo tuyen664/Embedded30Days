@@ -72,5 +72,7 @@
 - Khi duty thay đổi → độ rộng xung PWM thay đổi theo → độ sáng LED thay đổi. 
 
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/1V8tmH7x7xgLd1hcW51gp4WMesbTxTuIN/view?usp=drive_link
 
