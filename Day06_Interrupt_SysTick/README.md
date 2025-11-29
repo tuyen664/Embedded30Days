@@ -41,5 +41,7 @@
   - Đặt buttonPressed = 0; để xóa cờ, và bật lại ngắt EXTI1 trong NVIC.
 
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/17KJjSFrdEhgf7zpbLE4VXqT5PwJkTZGT/view?usp=drive_link
 
