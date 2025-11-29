@@ -129,5 +129,7 @@
  - Sau đó in ra màn hình Tera Term qua UART thông qua mảng **char msg[100];** 
 
 
-## Ảnh chụp 
+## Video
+
+https://drive.google.com/file/d/1jlBcXkvoyecvlGqMT3eM7F9QrUGZlcE2/view?usp=drive_link
 
