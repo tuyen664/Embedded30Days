@@ -27,18 +27,19 @@ void Delay_Ms(uint32_t u32Delay)
 {
 	while(u32Delay)
 	{
-		SysTick->LOAD = 72U*1000U-1U; // 71999 -> 0 -> 7200 xung clock -> 1ms
+	  SysTick->LOAD = 72U*1000U-1U; // 71999 -> 0 -> 72000 xung clock -> 1ms
 	  SysTick->VAL=0U;  
 	  SysTick->CTRL=5U;
-    /* bit 0 : Enable SysTick
+       /* 
+        bit 0 : Enable SysTick
 		bit 1 : TICKINT : bat ngat
 		bit 2 : CLKSOURCE : 1 -> (CLOCK CPU)HCKL = 72MHz , 0 = HCKL/8
 		bit 16: COUNTFLAG : Co bao dem xong (auto clear khi doc)
 		*/		
 
 	  while(!(SysTick->CTRL&(1U<<16U)))
-    {
+      {
 	  }
 	   --u32Delay;
-  }
+   }
 }
