@@ -1,7 +1,7 @@
 ## Mục tiêu
 
  - Thiết kế ngắt EXTI1 cho nút nhấn PA1
- - Thiết kế ngắt TIM2 để điều khiển tốc độ nháy của LED , 2 chu kì là 200ms và 1000ms
+ - Thiết kế ngắt TIM2 để điều khiển tốc độ nháy của LED , chọn 2 chu kì là 200ms và 1000ms
  - Thiết kế ngắt TIM3 thay hàm Delay_ms để chống dội cho nút nhấn 
 
 ## Giải thích
