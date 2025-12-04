@@ -14,8 +14,10 @@ Cấu hình Led nháy chu kì chính xác 1ms dùng SysTick
 - Bật clock cho port C (RCC->APB2ENR |= 0x10)
 - Cấu hình chân **PC13** là **Output Push-Pull, tốc độ 50 MHz**
 - GPIOC->ODR : Output Data Register (thanh ghi dữ liệu đầu ra)
-Nếu bit đó = 1 → chân xuất ra mức HIGH (3.3V) -> led tắt
-Nếu bit đó = 0 → chân xuất ra mức LOW (0V) -> led sáng 
+  
+  Nếu bit đó = 1 → chân xuất ra mức HIGH (3.3V) -> led tắt
+
+  Nếu bit đó = 0 → chân xuất ra mức LOW (0V) -> led sáng 
 
 - Push-Pull : có cả transistor kéo lên (PMOS) và kéo xuống (NMOS), nên tạo ra mức logic rõ ràng 0 hoặc 1
 + Đẩy dòng điện ra (khi output = 1 → nối lên VCC)
