@@ -12,7 +12,7 @@
  - Cấu hình PC13 Là **output push-pull 2Mhz**
  - Cấu hình PA1 là Input pull-up (cho nút nhấn) , kéo PA1 lên pull-up
    
-    Output : MCU tạo tín hiệu ra ngoài → linh kiện khác (dùng cho LED, motor, relay, v.v)
+    Output : MCU tạo tín hiệu ra ngoài (dùng cho LED, motor, relay, v.v)
    
     Input  : MCU nhận tín hiệu từ ngoài (Nút nhấn, cảm biến, UART RX, v.v)
    
@@ -20,12 +20,16 @@
 
 **2. Cấu hình EXTI cho PA1**
 
- - Kết nối EXTI1 với PA1 : AFIO->EXTICR[0] &= ~(0xF << 4);  // clear mapping EXTI1
+ - Reset EXTI1 : ```AFIO->EXTICR[0] &= ~(0xF << 4); ```
  - AFIO có bộ thanh ghi EXTICR[0...3] để chọn port nguồn cho các EXTI lines
- - EXTICR[0] chứa cấu hình cho EXTI0, EXTI1, EXTI2, EXTI3 , mỗi EXTI chiếm 4 bit
- -> EXTI1 bits [7:4] của EXTICR[0]
- - AFIO->EXTICR[0] |=  (0x0 << 4);  // chon port A (0b0000) 
- -> 0b0001 = port B , 0b0010 = port C ,...
+   
+    EXTICR[0] chứa cấu hình cho EXTI0, EXTI1, EXTI2, EXTI3 , mỗi EXTI chiếm 4 bit
+   
+   -> EXTI1 bits [7:4] của EXTICR[0]
+   
+ - Kết nối EXTI1 với PA1 : ```AFIO->EXTICR[0] |=  (0x0 << 4);  // chon port A (0b0000) ```
+   
+   -> 0b0001 = port B , 0b0010 = port C ,...
    
  **Ví dụ muốn nối EXTI1 với PB1** : AFIO->EXTICR[0] |= (0x1 << 4); // chọn Port B cho EXTI1
  
