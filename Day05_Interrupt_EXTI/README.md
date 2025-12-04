@@ -71,13 +71,13 @@
    
    (1 << 1) = bit số 1 → EXTI line 1 (PA1)
 
-    Nếu đúng xảy ra ngắt thì đảo Led : ```GPIOC->ODR ^= (1 << 13);```
+   - Nếu đúng xảy ra ngắt thì đảo Led : ```GPIOC->ODR ^= (1 << 13);```
    
   **Xóa cờ ngắt : EXTI->PR = (1 << 1);**
   
   **Trong STM32, để xóa cờ ngắt EXTI, ta phải ghi giá trị 1 vào chính bit đó.(không phải 0)**
   
-    Chú ý quan trọng : không nên dùng EXTI->PR |= (1 << 1); vì khi đó ta ghi 1 vào các bit khác
+   - Chú ý quan trọng : không nên dùng EXTI->PR |= (1 << 1); vì khi đó ta ghi 1 vào các bit khác
     có thể xóa nhầm khi dùng nhiều ngắt cùng lúc
 
 
