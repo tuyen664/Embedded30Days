@@ -45,7 +45,7 @@
     
     UART tự động truyền giá trị đó ra chân TX (PA9)
     
-    Trong quá trình ghi TXE = 0 , sau khi ghi xong tự động TXE = 1 , nhưng lưu ý là dữ liệu lúc này vẫn chưa gửi hoàn tất , ta cần check BUSY 
+    Trong quá trình ghi TXE = 0 , sau khi ghi xong tự động TXE = 1 , dữ liệu lúc này có thể vẫn chưa gửi hoàn tất , ta cần check BUSY 
 
  **2.2 void USART1_SendString()**
  
