@@ -13,12 +13,15 @@ Cấu hình PA1 làm  **nút nhấn** thay đổi trạng thái Led PC13 , biế
 - Cấu hình PC13 là chân nháy led , output push-pull 50MHz
 
 - Cấu hình PA1 là  **Input Pull-up** : PA1 được dùng làm ngõ vào và được kéo lên
-mức **logic cao (1)** bên trong vi điều khiển bằng điện trở nội bộ
--> khi nhấn nút : 1->0 (PA1 nối lên 3.3V qua pull-up), thả tay : 0->1 (PA1 
+mức **logic cao (1)** bên trong vi điều khiển bằng điện trở nội bộ.
+
+- khi nhấn nút : 1->0 (PA1 nối lên 3.3V qua pull-up), thả tay : 0->1 (PA1 
 nối xuống đất)
--> Không dùng Floating (thả nổi ) vì không có điện trỞ kéo lên hay kéo xuống 
+
+- Không dùng Floating (thả nổi ) vì không có điện trỞ kéo lên hay kéo xuống 
 PA1 bị nhiễu , dao động ngẫu nhiên giữa 0 và 1 -> vi điều khiển đọc sai trạng thái
 Nên dùng pull-down hoặc pull-up.
+
 - Cấu hình SysTick cứ 1ms là kích hoạt COUNTFLAG 
 
 **2. Hoạt động hàm chính**
