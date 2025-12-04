@@ -3,8 +3,8 @@
 Cấu hình PA1 làm  **nút nhấn** thay đổi trạng thái Led PC13 , biết cách **chống dội** khi nhấn nút 
 
 ## Phần cứng sử dụng
-**STM32F103
-**Nút nhấn đấu PA1
+**STM32F103**
+**Nút nhấn đấu PA1**
 
 
 ## Giải thích code hoạt động
