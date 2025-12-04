@@ -32,11 +32,11 @@ mức **logic cao (1)** bên trong vi điều khiển bằng điện trở nội
       GPIO_ResetBits(GPIOC, GPIO_Pin_13);  // LED sáng (active low)
    ```
 
- - Kiểm tra nút nhấn : ```c if (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)) ```
+ - Kiểm tra nút nhấn : ``` if (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)) ```
    
    Nếu PA1 ở mức 0, nghĩa là nút đang được nhấn.
 
- - Chống dội (Debounce): ```c Delay_Ms(100U);```
+ - Chống dội (Debounce): ``` Delay_Ms(100U);```
    
    Khi nhấn nút thật, tiếp điểm cơ học bị rung (bounce), tạo ra các 
    xung 0/1 nhanh trong vài mili-giây.
@@ -49,7 +49,7 @@ mức **logic cao (1)** bên trong vi điều khiển bằng điện trở nội
    Đảm bảo nút thực sự đang được nhấn, không phải nhiễu.
 
 - Đợi cho đến khi nút được nhả ra : 0-> 1
- ```c while (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)); ```
+ ``` while (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)); ```
 
 - Tăng biến đếm lên , nếu là chẵn thì cho led on , nếu lẻ thì led off.
 
