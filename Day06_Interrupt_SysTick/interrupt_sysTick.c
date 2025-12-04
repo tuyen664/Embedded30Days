@@ -20,7 +20,8 @@ int main(void)
 }
 
 
-void GPIO_Config(void) {
+void GPIO_Config(void) 
+{
     // Bat clock cho GPIOA, GPIOC, AFIO
     RCC->APB2ENR |= (1 << 2) | (1 << 4) | (1 << 0);
 
