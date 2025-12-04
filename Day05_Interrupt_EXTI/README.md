@@ -71,7 +71,7 @@
    
       (1 << 1) = bit số 1 → EXTI line 1 (PA1)
 
-   - Nếu đúng xảy ra ngắt thì đảo Led : ```GPIOC->ODR ^= (1 << 13);```
+- Nếu đúng xảy ra ngắt thì đảo Led : ```GPIOC->ODR ^= (1 << 13);```
    
   **Xóa cờ ngắt : EXTI->PR = (1 << 1);**
   
