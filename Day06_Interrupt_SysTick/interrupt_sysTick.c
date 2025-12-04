@@ -11,7 +11,7 @@ int main(void)
 {
     GPIO_Config();
     EXTI_Config();
-    SysTick_Config_Custom();
+    SysTick_Config();
 
     while (1)
 	{
