@@ -9,7 +9,7 @@ int main(void)
     TIM2_Config();
 
     while (1) 
-		{
+	{
         
     }
 }
@@ -27,7 +27,7 @@ void TIM2_Config(void)
 	
 	 RCC->APB1ENR |= (1<<0); // bat clock cho TIM2
 	 TIM2->CR1 = 0; // Dua TIM2 ve trang thai mac dinh
-   TIM2->CNT = 0; // Reset bo dem ve 0
+     TIM2->CNT = 0; // Reset bo dem ve 0
 	
 	 TIM2->PSC = 7199 ; // 72MHz / 7200 = 10KHz -> 0.1ms/tick
 	 TIM2->ARR = 5000-1 ; // 5000/10KHz = 0.5s
@@ -41,9 +41,9 @@ void TIM2_Config(void)
 
 
 void TIM2_IRQHandler(void) 
-{
+{    // Check update flag
     if (TIM2->SR & (1 << 0)) 
-		{      // Check update flag
+	{    
         TIM2->SR &= ~(1 << 0);      // Clear flag
         GPIOC-> ODR ^= (1 << 13);     // Toggle LED
     }
