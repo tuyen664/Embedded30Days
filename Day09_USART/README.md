@@ -43,9 +43,9 @@
    
     Khi TXE = 1, gán dữ liệu c vào Data Register (DR)
     
-    UART sẽ **tự động** truyền giá trị đó ra chân TX (PA9)
+    UART tự động truyền giá trị đó ra chân TX (PA9)
     
-    Khi ghi xong, UART sẽ tự động **reset TXE = 0** và bắt đầu gửi bit ra đường truyền
+    Trong quá trình ghi TXE = 0 , sau khi ghi xong tự động TXE = 1 , nhưng lưu ý là dữ liệu lúc này vẫn chưa gửi hoàn tất , ta cần check BUSY 
 
  **2.2 void USART1_SendString()**
  
@@ -58,11 +58,11 @@
     
   - USART1_SendChar(*str++)
     
-   *str → lấy ký tự hiện tại trong chuỗi 
+     *str → lấy ký tự hiện tại trong chuỗi 
    
-   USART1_SendChar(...) → gọi hàm để gửi ký tự qua UART
+     USART1_SendChar(...) → gọi hàm để gửi ký tự qua UART
    
-   str++ : tăng con trỏ sang ký tự kế tiếp trong chuỗi
+     str++ : tăng con trỏ sang ký tự kế tiếp trong chuỗi
  
   - USART1_SendString("HELLO!\r\n"); gửi chuỗi ra Tera Term
 
