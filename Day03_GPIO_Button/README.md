@@ -44,7 +44,7 @@ mức **logic cao (1)** bên trong vi điều khiển bằng điện trở nội
    Lệnh Delay_Ms(100) giúp chờ tín hiệu ổn định, tránh đọc sai nhiều lần.
 
  - check lại xem nút có đúng đang nhấn không : 
-  if (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1))
+  ``` if (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1))```
 
    Đảm bảo nút thực sự đang được nhấn, không phải nhiễu.
 
