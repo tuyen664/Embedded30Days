@@ -31,9 +31,9 @@
    
    -> 0b0001 = port B , 0b0010 = port C ,...
    
- **Ví dụ muốn nối EXTI1 với PB1** : AFIO->EXTICR[0] |= (0x1 << 4); // chọn Port B cho EXTI1
+     Ví dụ muốn nối EXTI1 với PB1 : AFIO->EXTICR[0] |= (0x1 << 4); // chọn Port B cho EXTI1
  
- -  EXTI->IMR  |= (1 << 1);   // Unmask line 1 -> cho phep line 1 phat ngat
+ - ```EXTI->IMR  |= (1 << 1);   // Unmask line 1``` -> cho phep line 1 phat ngat
    
     EXTI->IMR = Interrupt Mask Register (Thanh ghi mặt nạ ngắt)
     
@@ -43,13 +43,13 @@
     
     bit = 0 : chặn line đó , tức có sự kiện EXTI nhưng không báo ngắt lên NVIC 
 
- - EXTI->FTSR |= (1 << 1); // Ngắt cạnh xuống
+ - ```EXTI->FTSR |= (1 << 1); // Ngắt cạnh xuống```
    
     Bit = 1 Kích hoạt ngắt cạnh xuống ( khi bấm nút PA1 pull-up từ 1-> 0 -> sinh ngắt )
    
     Bit = 0 không kích hoạt ngắt
  
- - EXTI->RTSR |= (1 << 1);  // Rising trigger
+ - ```EXTI->RTSR |= (1 << 1);  // Rising trigger```
    
     Ta cấu hình PA1 là pull-up nên nếu ta chọn kích hoạt ngắt cạnh lên thì khi bấm chưa kích hoạt ngắt , mà khi thả nút thì mới
     kích hoạt (1->0->1)
@@ -65,11 +65,11 @@
     **void EXTI1_IRQHandler(void)** - đây là tên mặc định đã cấu hình sẵn
     trong bảng vector ngắt của STM32 
  
- ```if (EXTI->PR & (1 << 1)) ``` -> kiểm tra xem ngắt có thực sự đến từ line 1 
+ - ```if (EXTI->PR & (1 << 1)) ``` -> kiểm tra xem ngắt có thực sự đến từ line 1 
  
-   EXTI->PR = Pending Register, chứa cờ báo ngắt đang xử lý
+      EXTI->PR = Pending Register, chứa cờ báo ngắt đang xử lý
    
-   (1 << 1) = bit số 1 → EXTI line 1 (PA1)
+      (1 << 1) = bit số 1 → EXTI line 1 (PA1)
 
    - Nếu đúng xảy ra ngắt thì đảo Led : ```GPIOC->ODR ^= (1 << 13);```
    
