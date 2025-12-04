@@ -17,22 +17,26 @@ mức **logic cao (1)** bên trong vi điều khiển bằng điện trở nội
 
 - khi nhấn nút : 1->0 (PA1 nối lên 3.3V qua pull-up -> xuống đất) , thả tay : 0->1 
 
-- Không dùng Floating (thả nổi ) vì không có điện trỞ kéo lên hay kéo xuống 
-PA1 bị nhiễu , dao động ngẫu nhiên giữa 0 và 1 -> vi điều khiển đọc sai trạng thái. 
-Nên dùng pull-down hoặc pull-up.
+- Không dùng Floating (thả nổi ) vì không có điện trỞ kéo lên hay kéo xuống
+  
+  PA1 bị nhiễu , dao động ngẫu nhiên giữa 0 và 1 -> vi điều khiển đọc sai trạng thái.
+   
+  Nên dùng pull-down hoặc pull-up.
 
 - Cấu hình SysTick cứ 1ms là kích hoạt COUNTFLAG 
 
 **2. Hoạt động hàm chính**
- - Khởi tạo : 
+ - Khởi tạo :
+   ```c
       GPIO_Config();
       GPIO_ResetBits(GPIOC, GPIO_Pin_13);  // LED sáng (active low)
+   ```
 
- - Kiểm tra nút nhấn : if (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1))
+ - Kiểm tra nút nhấn : ```c if (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)) ```
    
    Nếu PA1 ở mức 0, nghĩa là nút đang được nhấn.
 
- - Chống dội (Debounce): Delay_Ms(100U);
+ - Chống dội (Debounce): ```c Delay_Ms(100U);```
    
    Khi nhấn nút thật, tiếp điểm cơ học bị rung (bounce), tạo ra các 
    xung 0/1 nhanh trong vài mili-giây.
@@ -42,10 +46,10 @@ Nên dùng pull-down hoặc pull-up.
  - check lại xem nút có đúng đang nhấn không : 
   if (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1))
 
-  Đảm bảo nút thực sự đang được nhấn, không phải nhiễu.
+   Đảm bảo nút thực sự đang được nhấn, không phải nhiễu.
 
 - Đợi cho đến khi nút được nhả ra : 0-> 1
- while (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1));
+ ```c while (0U == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)); ```
 
 - Tăng biến đếm lên , nếu là chẵn thì cho led on , nếu lẻ thì led off.
 
