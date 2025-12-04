@@ -8,7 +8,7 @@ int main(void)
 {
     SysTick_Init();
     LED_Init();
-	  USART1_Init();
+	USART1_Init();
     USART1_SendString("UART Command Mode Ready\r\n");
 
     uint8_t blinkMode = 0;
