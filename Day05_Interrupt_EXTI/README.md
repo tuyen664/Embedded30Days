@@ -51,7 +51,7 @@
  
    ```EXTI->RTSR |= (1 << 1);```   // Rising trigger
    
-    Ta cấu hình PA1 là pull-up nên nếu ta chọn **kích hoạt ngắt cạnh lên** thì khi bấm chưa kích hoạt ngắt , mà khi thả nút thì mới
+    Ta cấu hình PA1 là pull-up nên nếu ta chọn kích hoạt ngắt cạnh lên thì khi bấm chưa kích hoạt ngắt , mà khi thả nút thì mới
     kích hoạt (1->0->1)
 
   **Quan trọng : Bật ngắt trong NVIC** :  ```NVIC_EnableIRQ(EXTI1_IRQn);// EXTI1``` -> ngắt line 1
@@ -62,8 +62,8 @@
 **3. Hàm xử lý ngắt**
 
  - khi ta nhấn PA1 thì kích hoạt ngắt , CPU sẽ **tự động** nhảy vào hàm 
-  **void EXTI1_IRQHandler(void)** - đây là tên mặc định đã cấu hình sẵn
-  trong bảng vector ngắt của STM32 
+    **void EXTI1_IRQHandler(void)** - đây là tên mặc định đã cấu hình sẵn
+    trong bảng vector ngắt của STM32 
  
  ```if (EXTI->PR & (1 << 1)) ``` -> kiểm tra xem ngắt có thực sự đến từ line 1 
  
@@ -71,14 +71,14 @@
    
    (1 << 1) = bit số 1 → EXTI line 1 (PA1)
 
- - Nếu đúng xảy ra ngắt thì đảo Led : ```GPIOC->ODR ^= (1 << 13);```
+    Nếu đúng xảy ra ngắt thì đảo Led : ```GPIOC->ODR ^= (1 << 13);```
    
   **Xóa cờ ngắt : EXTI->PR = (1 << 1);**
   
   **Trong STM32, để xóa cờ ngắt EXTI, ta phải ghi giá trị 1 vào chính bit đó.(không phải 0)**
   
-  Chú ý quan trọng : không nên dùng EXTI->PR |= (1 << 1); vì khi đó ta ghi 1 vào các bit khác
-  có thể xóa nhầm khi dùng nhiều ngắt cùng lúc
+    Chú ý quan trọng : không nên dùng EXTI->PR |= (1 << 1); vì khi đó ta ghi 1 vào các bit khác
+    có thể xóa nhầm khi dùng nhiều ngắt cùng lúc
 
 
 ## Video
