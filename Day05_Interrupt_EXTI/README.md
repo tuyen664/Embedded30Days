@@ -43,13 +43,13 @@
     
     bit = 0 : chặn line đó , tức có sự kiện EXTI nhưng không báo ngắt lên NVIC 
 
- ``` EXTI->FTSR |= (1 << 1); ```  // Ngắt cạnh xuống
+ - EXTI->FTSR |= (1 << 1); // Ngắt cạnh xuống
    
     Bit = 1 Kích hoạt ngắt cạnh xuống ( khi bấm nút PA1 pull-up từ 1-> 0 -> sinh ngắt )
    
     Bit = 0 không kích hoạt ngắt
  
-   ```EXTI->RTSR |= (1 << 1);```   // Rising trigger
+ - EXTI->RTSR |= (1 << 1);  // Rising trigger
    
     Ta cấu hình PA1 là pull-up nên nếu ta chọn kích hoạt ngắt cạnh lên thì khi bấm chưa kích hoạt ngắt , mà khi thả nút thì mới
     kích hoạt (1->0->1)
@@ -57,7 +57,7 @@
   **Quan trọng : Bật ngắt trong NVIC** :  ```NVIC_EnableIRQ(EXTI1_IRQn);// EXTI1``` -> ngắt line 1
 
  - NVIC :Bộ điều khiển ngắt trung tâm quản lý ngắt từ EXTI, USART, Timer, ADC...và ưu tiên
-  xử lý chúng
+    xử lý chúng
 
 **3. Hàm xử lý ngắt**
 
