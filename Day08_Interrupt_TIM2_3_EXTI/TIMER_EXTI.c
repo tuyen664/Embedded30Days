@@ -23,7 +23,7 @@ void GPIO_Config(void)
     // PC13 as Output Push-Pull (LED)
     GPIOC->CRH &= ~(0xF << 20);
     GPIOC->CRH |=  (0x3 << 20);
-	  GPIOC->ODR |=  (1 << 13); 
+	GPIOC->ODR |=  (1 << 13); 
 
     // PA1 as Input Pull-up (Button)
     GPIOA->CRL &= ~(0xF << 4);
@@ -34,11 +34,11 @@ void GPIO_Config(void)
 void TIM2_Config(uint16_t arr)
 {
     RCC->APB1ENR |= (1<<0);      // Enable TIM2 clock
-	  TIM2->CR1 = 0;
-	  TIM2->CNT = 0; 
-	  TIM2->SR &= ~(1<<0);         // Clear flag
+	TIM2->CR1 = 0;
+	TIM2->CNT = 0; 
+	TIM2->SR &= ~(1<<0);         // Clear flag
     TIM2->PSC = 7199;            // 1 tick = 0.1ms (72MHz / 7200 = 10kHz)
-    TIM2->ARR = 10U*arr;             // Period = arr (ms)
+    TIM2->ARR = 10U*arr;         // Period = arr (ms)
     TIM2->EGR |= (1<<0);         // Update registers immediately
     TIM2->DIER |= (1<<0);        // Enable update interrupt
     TIM2->CR1 |= (1<<0);         // Enable counter
@@ -48,11 +48,11 @@ void TIM2_Config(uint16_t arr)
 void TIM3_Config(uint16_t ms)
 {
     RCC->APB1ENR |= (1<<1);      // Enable TIM3 clock
-	  TIM3->CR1 = 0;
-	  TIM3->CNT = 0;
-	  TIM3->SR &= ~(1<<0);         // Clear flag
+	TIM3->CR1 = 0;
+	TIM3->CNT = 0;
+	TIM3->SR &= ~(1<<0);         // Clear flag
     TIM3->PSC = 7199;            // 1 tick = 0.1ms
-    TIM3->ARR = 10U*ms;              // Exact ms delay
+    TIM3->ARR = 10U*ms;            
     TIM3->EGR |= (1<<0);         // Update registers
     TIM3->DIER |= (1<<0);        // Enable update interrupt
     TIM3->CR1 |= (1<<0);         // Start counting
@@ -74,7 +74,7 @@ void EXTI_Config(void)
 void TIM2_IRQHandler(void)
 {
     if (TIM2->SR & (1<<0))
-		{
+	{
         GPIOC->ODR ^= (1<<13);   // Toggle LED
         TIM2->SR &= ~(1<<0);     // Clear interrupt flag
     }
@@ -82,8 +82,9 @@ void TIM2_IRQHandler(void)
 
 void EXTI1_IRQHandler(void)
 {
-    if (EXTI->PR & (1<<1)) {
-        // --- Disable EXTI1 temporarily for debounce ---
+    if (EXTI->PR & (1<<1))
+	{
+        // Disable EXTI1
         EXTI->IMR &= ~(1<<1);
 
         // Toggle blinking speed
@@ -91,9 +92,9 @@ void EXTI1_IRQHandler(void)
         if (speed_mode)
             TIM2->ARR = 2000;     // Fast (200ms)
         else
-            TIM2->ARR = 10000;     // Slow (1s)
+            TIM2->ARR = 10000;    // Slow (1s)
 				
-				TIM2->CNT = 0;
+			TIM2->CNT = 0;
         TIM2->EGR |= (1<<0);     // Force update
 
         // Start 50ms debounce timer
@@ -107,10 +108,10 @@ void EXTI1_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
     if (TIM3->SR & (1<<0))
-		{
+	{
         // After 50ms, re-enable EXTI1
         EXTI->IMR |= (1<<1);
-        TIM3->SR &= ~(1<<0);     // Clear flag
+        TIM3->SR  &= ~(1<<0);     // Clear flag
         TIM3->CR1 &= ~(1<<0);    // Stop Timer3
     }
 }
