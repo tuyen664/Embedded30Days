@@ -1,7 +1,7 @@
 ## Mục tiêu 
 
- - Dùng ngắt **EXTI** tại PA1 để cập nhật trạng thái nút đã nhấn và thời gian để chống dội
- - Dùng ngắt **SysTick** để xử lý **chống dội** và đảo LED PC13 khi cập nhật kết quả từ EXTI.
+ - Dùng ngắt **EXTI** tại PA1 để cập nhật trạng thái nút nhấn và thời gian để chống dội
+ - Dùng ngắt **SysTick** để xử lý **chống dội** và đảo LED PC13 cập nhật từ EXTI.
 
 ## Giải thích 
 
@@ -44,7 +44,7 @@
      có nhiều nguồn ngắt (Biết ngắt ở chỗ nào) hoặc mở rộng hệ thống sau này.
     
   - Nếu !(GPIOA->IDR & (1 << 1)) → nghĩa là nút vẫn đang được nhấn → đảo trạng thái LED.
-  - Đặt buttonPressed = 0; để xóa cờ, và bật lại ngắt EXTI1 trong NVIC.
+  - Đặt buttonPressed = 0; bật lại ngắt EXTI1 trong NVIC.
 
 
 ## Video
