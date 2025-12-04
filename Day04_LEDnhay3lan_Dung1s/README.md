@@ -14,6 +14,7 @@
 ## Lưu ý :
 
 ``` GPIOC->BSRR = (1 << (13 + 16)); // reset PC13 ``` -> LED on
+
 ``` GPIOC->BSRR = (1 << 13) ; // led off ```
 
 - Chỉ có BSRR (32bit) mới có chức năng này 
