@@ -35,16 +35,26 @@ int main(void)
             if (idx == 0) continue;
             buffer[idx] = '\0'; idx = 0;
 
-            if (strcmp(buffer, "ON") == 0)      { blinkMode = 0; LED_ON();  USART1_SendString("LED ON\r\n"); }
-            else if (strcmp(buffer, "OFF") == 0){ blinkMode = 0; LED_OFF(); USART1_SendString("LED OFF\r\n"); }
-            else if (strcmp(buffer, "BLINK") == 0){ blinkMode = 1; USART1_SendString("LED BLINK\r\n"); }
-            else if (strcmp(buffer, "STATUS") == 0){
+            if (strcmp(buffer, "ON") == 0)      
+			{
+				blinkMode = 0; LED_ON();  USART1_SendString("LED ON\r\n"); 
+			}
+            else if (strcmp(buffer, "OFF") == 0)
+			{
+				blinkMode = 0; LED_OFF(); USART1_SendString("LED OFF\r\n"); 
+			}
+            else if (strcmp(buffer, "BLINK") == 0)
+			{
+				blinkMode = 1; USART1_SendString("LED BLINK\r\n"); 
+			}
+            else if (strcmp(buffer, "STATUS") == 0)
+			{
                 if (IS_LED_ON()) USART1_SendString("LED IS ON\r\n");
                 else USART1_SendString("LED IS OFF\r\n");
             }
             else USART1_SendString("UNKNOWN CMD\r\n");
             memset(buffer, 0, sizeof(buffer));
         }
-        else if (idx < sizeof(buffer) - 1) buffer[idx++] = c;
+        else if (idx < sizeof(buffer) - 1)  buffer[idx++] = c;
     }
 }
