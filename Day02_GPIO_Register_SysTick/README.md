@@ -30,11 +30,16 @@ Nếu bit đó = 0 → chân xuất ra mức LOW (0V) -> led sáng
 
   SysTick->VAL=0U; // Val là biến đếm đang chạy nó chạy từ Load-> 0 , đến 0 thì bật COUNTFLAG
   Và reset lại 
-- SysTick->CTRL = 5U;  
-                bit 0 : Enable SysTick
+- SysTick->CTRL = 5U;
+  
+        bit 0 : Enable SysTick
+  
 		bit 1 : TICKINT : bat ngat
+  
 		bit 2 : CLKSOURCE : 1 -> (CLOCK CPU)HCKL = 72MHz , 0 = HCKL/8
+  
 		bit 16: COUNTFLAG : Co bao dem xong (auto clear khi doc)
+  
      → Bật SysTick, dùng clock CPU, không dùng ngắt
 
 **3. Vòng lặp chính** 
