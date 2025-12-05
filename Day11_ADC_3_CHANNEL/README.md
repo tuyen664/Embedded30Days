@@ -64,7 +64,7 @@
 #### 1.2 Đọc trung bình 5 mẫu dữ liệu để chính xác hơn : static uint16_t ADC1_ReadAverage(uint8_t channel, uint8_t sample_count)
  - Tham số : **channel** → chỉ định kênh ADC muốn đọc (VD: 0 = PA0, 1 = PA1, v.v.)
    
-  **sample_count** : số lượng mẫu ta muốn lấy để tính trung bình
+    **sample_count** : số lượng mẫu ta muốn lấy để tính trung bình
   
  - Biến sum dùng để cộng dồn tất cả các mẫu ADC. Dùng kiểu uint32_t để tránh tràn số khi cộng nhiều mẫu.
  - ```sum += ADC1_Read(channel);``` Cộng dồn các giá trị đọc được từ ADC vào sum
@@ -72,15 +72,15 @@
 
 ### 2. Khởi tạo UART
 
-   Bật clock: GPIOA + USART1
+    Bật clock: GPIOA + USART1
    
-   PA9 TX → Alternate Function Push-Pull, 50 MHz
+    PA9 TX → Alternate Function Push-Pull, 50 MHz
    
-   PA10 RX → Input Floating mode
+    PA10 RX → Input Floating mode
    
-   Baudrate: 9600
+    Baudrate: 9600
    
-   Bật UART (UE), truyền (TE), nhận (RE)
+    Bật UART (UE), truyền (TE), nhận (RE)
 
 ### 2.1 Gửi kí tự và chuỗi
 
