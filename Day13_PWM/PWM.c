@@ -1,11 +1,15 @@
 #include "stm32f10x.h"
 #include <stdint.h>
 
-#define PWM_MAX 1000     // ARR value (PWM resolution)
+#define PWM_MAX 1000    
 #define STEP    1 
 
 static void TIM2_Interrupt_Init(void);
+void TIM2_IRQHandler(void);
 static void TIM3_PWM_Init(void);
+
+volatile uint16_t duty = 0;
+volatile int8_t direction = 1;
 
 
 
@@ -16,14 +20,10 @@ int main(void)
 
     while(1)
     {
-       //
+       
     }
 }
 
-void TIM2_IRQHandler(void);
-
-volatile uint16_t duty = 0;
-volatile int8_t direction = 1;
 
 
 static void TIM2_Interrupt_Init(void)
@@ -32,7 +32,7 @@ static void TIM2_Interrupt_Init(void)
 
     TIM2->PSC = 7199;          // 72MHz / 7200 = 10 kHz
     TIM2->ARR = 10 -1 ;             // interrupt ~ 1ms
-	  TIM2->EGR |= 1;
+	TIM2->EGR |= 1;
     TIM2->DIER |= (1 << 0);     // cho phep ngat
     TIM2->CR1  |= (1 << 0);     // enable TIM2
 
@@ -75,7 +75,7 @@ static void TIM3_PWM_Init(void)
     TIM3->CCER |= (1 << 0);   // enable channel 1 
     TIM3->CR1  |= (1 << 7) | (1 << 0); // ARPE + CEN
 	
-	  TIM3->EGR |= (1 << 0);   // Force Update Event
+	TIM3->EGR |= (1 << 0);   // Force Update Event
 }
 
 
