@@ -9,6 +9,8 @@
 
 **1. Cấu hình PWM trên PA6 (TIM3_CH1)**
 
+- PA6 nằm trên TIM3 Channel 1 (CH1)
+
 - Bật clock cho GPIOA và TIM3
   
    RCC->APB2ENR |= (1 << 2);  // GPIOA
