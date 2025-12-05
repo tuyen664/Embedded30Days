@@ -9,7 +9,7 @@
 
 **1. Cấu hình PWM trên PA6 (TIM3_CH1)**
 
-- PA6 nằm trên TIM3 Channel 1 (CH1)
+- PA6 nằm trên TIM3 Channel 1 (CH1) -> cấu hình TIM3_CH1 ở chế độ PWM và bật chân PA6
 
 - Bật clock cho GPIOA và TIM3
   
