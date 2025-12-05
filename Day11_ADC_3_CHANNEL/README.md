@@ -7,6 +7,7 @@
 ## Giải thích 
 
 ### 1. Cấu hình ADC
+
  - Enable clock GPIOA (bit2) và ADC1 (bit 9) trong thanh ghi ```RCC->APB2ENR |= (1U << 2) | (1U << 9);```
  - Cấu hình các chân PA0, PA1, PA2 làm ngõ vào **analog** , khi clear hết 4 bit → MODE=00, CNF=00 → chế độ **analog input**
  - Bật ADC : ```ADC1->CR2 |= (1U << 0);```  // ADON = 1 -> bật nguồn
@@ -31,7 +32,7 @@
    
     -> Kết quả: chỉ cần gọi ADC1->CR2 |= (1<<22) để bắt đầu chuyển đổi ADC
 
- - Reset bộ hiệu chuẩn ADC : ```ADC1->CR2 |= (1U << 3);`` Bit 3 : RSTCAL (reset calibration registers)
+ - Reset bộ hiệu chuẩn ADC : ```ADC1->CR2 |= (1U << 3);``` Bit 3 : RSTCAL (reset calibration registers)
    
     Khi phần cứng đang reset, bit này = 1. Vòng while chờ đến khi bit tự clear (xong reset) ```while (ADC1->CR2 & (1U << 3));```
 
@@ -53,7 +54,7 @@
 #### 1.1 Đọc dữ liệu ADC : static uint16_t ADC1_Read(uint8_t channel)
  - Thanh ghi SQR3 (Regular Sequence Register 3) dùng để chọn kênh ADC
  - ```ADC1->CR2 |= (1U << 22);``` Bit 22 trong CR2 là SWSTART → bắt đầu quá trình chuyển đổi ADC
- - ```while (!(ADC1->SR & (1U << 1)));`` Vòng lặp chờ đến khi việc chuyển đổi xong
+ - ```while (!(ADC1->SR & (1U << 1)));``` Vòng lặp chờ đến khi việc chuyển đổi xong
    
      Bit 1 trong ADC1->SR là EOC (End of Conversion) .Khi ADC hoàn tất đo, EOC=1
    
