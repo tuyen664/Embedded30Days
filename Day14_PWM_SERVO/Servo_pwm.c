@@ -3,15 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-// ================== CONFIG CONSTANTS ==================
+/*================== CONFIG CONSTANTS ==================*/
 #define SYSCLK_HZ       72000000UL // Unsigned Long
 #define UART_BAUDRATE   9600U
 
-#define SERVO_MIN_US    600U    // 600µs = 0.6 ms pulse - 0°
-#define SERVO_MAX_US    2400U   // 2.4 ms pulse -180°
+#define SERVO_MIN_US    600U    // 600Âµs = 0.6 ms pulse - 0Â°
+#define SERVO_MAX_US    2400U   // 2.4 ms pulse -180Â°
 #define PWM_FREQ_HZ     50U     // 50 Hz = 20 ms period
 
-// ================== FUNCTION PROTOTYPES ==================
+/* ================== FUNCTION PROTOTYPES ==================*/
 static void System_Init(void);
 static void UART1_Init(void);
 static void UART1_SendString(const char *s);
@@ -21,11 +21,11 @@ static void Servo_SetAngle(uint8_t angle);
 static void SysTick_Init(void);
 static void delay_ms(uint32_t ms);
 
-// ================== MAIN ==================
+/* ================== MAIN ==================*/
 int main(void)
 {
     char buffer[32];
-	  char outbuf[32];
+	char outbuf[32];
     
     System_Init();
     UART1_SendString("\r\n=== Servo Control Ready ===\r\n");
@@ -52,7 +52,7 @@ int main(void)
         }
     }
 
-    if (i == 0) // kiem tra xem có du lieu khong
+    if (i == 0) // kiem tra xem cÃ³ du lieu khong
         continue;
 
     buffer[i] = '\0';
@@ -69,7 +69,7 @@ int main(void)
 
 }
 
-// ================== SYSTEM INITIALIZATION ==================
+/* ================== SYSTEM INITIALIZATION ================== */
 static void System_Init(void)
 {
     SysTick_Init();
@@ -77,7 +77,7 @@ static void System_Init(void)
     TIM4_PWM_Init();
 }
 
-// ================== UART1 IMPLEMENTATION ==================
+/* ================== UART1 IMPLEMENTATION ================== */
 static void UART1_Init(void)
 {
     // Enable clocks for GPIOA and USART1
@@ -96,7 +96,7 @@ static void UART1_SendString(const char *s)
 {
     while (*s)
     {
-        while (!(USART1->SR & (1U << 7))); // Wait until TXE = 1
+       while (!(USART1->SR & (1U << 7))); // Wait until TXE = 1
        USART1->DR = *s++;
     }
 }
@@ -107,14 +107,14 @@ static char UART1_ReceiveChar(void)
     return (char)(USART1->DR & 0xFF);
 }
 
-// ================== SERVO CONTROL USING TIM4_CH4 (PB9) ==================
+/*================== SERVO CONTROL USING TIM4_CH4 (PB9) ==================*/
 static void TIM4_PWM_Init(void)
 {
     // Enable clocks for GPIOB and TIM4
     RCC->APB2ENR |= (1U << 3); // GPIOB clock enable
     RCC->APB1ENR |= (1U << 2); // TIM4 clock enable
 	
-	  RCC->APB2ENR |= (1U << 0); // Enable AFIO clock
+	RCC->APB2ENR |= (1U << 0); // Enable AFIO clock
 
     // Configure PB9 -TIM4_CH4 (AF Push-Pull)
     GPIOB->CRH &= ~(0xFU << 4);
@@ -122,16 +122,16 @@ static void TIM4_PWM_Init(void)
 
     // Timer configuration
 
-    TIM4->PSC = 72-1; // 1 tick = 1µs
+    TIM4->PSC = 72-1; // 1 tick = 1Âµs
     TIM4->ARR = 20000-1; // 50Hz
 
-    TIM4->CCR4 = 1500; // Default 1.5ms - 90°
+    TIM4->CCR4 = 1500; // Default 1.5ms - 90Â°
     TIM4->CCMR2 |= (6U << 12) | (1U << 11);  // PWM mode 1 + preload enable
     TIM4->CCER  = (1U << 12);              // Enable output on CH4
     TIM4->CR1   = (1U << 7) | (1U << 0);   // ARPE + Counter enable
 		
-		TIM4->EGR |= 1; // Generate update event
-		delay_ms(20);
+    TIM4->EGR |= 1; // Generate update event
+	delay_ms(20);
 }
 
 static void Servo_SetAngle(uint8_t angle)
@@ -141,8 +141,8 @@ static void Servo_SetAngle(uint8_t angle)
     uint32_t pulse = SERVO_MIN_US +
                      ((SERVO_MAX_US - SERVO_MIN_US) * angle) / 180U;
     TIM4->CCR4 = pulse;
-	  TIM4->EGR |= 1;
-	  delay_ms (10);
+	TIM4->EGR |= 1;
+	delay_ms (10);
 }
 
 // ================== DELAY USING SYSTICK ==================
