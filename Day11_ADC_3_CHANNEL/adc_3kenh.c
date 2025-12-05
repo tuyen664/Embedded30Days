@@ -1,7 +1,6 @@
 #include "stm32f10x.h"
 #include <stdio.h>
 
-/* ===================== CONFIG MACROS ===================== */
 #define ADC_CH1            0U          // PA0
 #define ADC_CH2            1U          // PA1
 #define ADC_CH3            2U          // PA2
@@ -12,7 +11,6 @@
 
 
 
-/* ===================== FUNCTION PROTOTYPES ===================== */
 static void UART1_Init(void);
 static void UART1_SendChar(char c);
 static void UART1_SendString(const char *s);
@@ -24,10 +22,9 @@ static uint16_t ADC1_ReadAverage(uint8_t channel, uint8_t sample_count);
 static void SysTick_Init(void);
 static void DelayMs(uint32_t ms);
 
-/* ===================== GLOBAL ===================== */
+/* GLOBAL */
 static volatile uint32_t sysTickMs = 0;
 
-/* ===================== MAIN ===================== */
 int main(void)
 {
     char msg[64];
@@ -115,9 +112,9 @@ static void ADC1_Init(void)
     // Power on the ADC
     ADC1->CR2 |= (1U << 0);  // ADON = 1
     DelayMs(1);
-	  // ADC1->CR2 |= (1U << 0);   // Lan 2: start ADC (optional theo manual)
+    // ADC1->CR2 |= (1U << 0);   // Lan 2: start ADC (optional theo manual)
 	
-	  ADC1->CR2 |= (1U << 1);   // CONT = 1 (Continuous mode)
+    ADC1->CR2 |= (1U << 1);   // CONT = 1 (Continuous mode)
 
     
     // Enable software trigger mode
