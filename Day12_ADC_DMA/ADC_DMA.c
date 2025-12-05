@@ -11,19 +11,20 @@
 
 static volatile uint16_t adc_buf[ADC_CHANNELS];
 
-// ====== Function prototypes ======
+/* ====== Function prototypes ====== */
+
 static void UART1_Init(void);
 static void UART1_SendChar(char c);
 static void UART1_SendString(const char *s);
 
-static void DMA1_CH1_Config(void);
 static void ADC1_Config(void);
 static void ADC1_DMA_ConFig(void);
+static void DMA1_CH1_Config(void);
 static void Start_ADC_Conversions(void);
 
 static void delay_ms(uint32_t ms);
 
-// ============================================================
+
 int main(void)
 {
     char msg[100];
@@ -33,7 +34,7 @@ int main(void)
     ADC1_Config();         // Configure ADC and perform calibration
     ADC1_DMA_ConFig();     // Configure ADC scan mode, DMA bit, and sequence
     DMA1_CH1_Config();     // Configure DMA (after ADC is ready)
-	  Start_ADC_Conversions();
+	Start_ADC_Conversions();
    
 
     UART1_SendString("=== ADC Multi-Channel DMA Demo ===\r\n");
@@ -50,7 +51,7 @@ int main(void)
     }
 }
 
-// ================= UART =================
+/* ================= UART ================= */
 static void UART1_Init(void)
 {
     // Enable clocks for GPIOA and USART1
@@ -77,12 +78,12 @@ static void UART1_SendString(const char *s)
     while (*s)
     {
         if (*s == '\n')
-            UART1_SendChar('\r');        // Convert LF ? CRLF
+            UART1_SendChar('\r');    
         UART1_SendChar(*s++);
     }
 }
 
-// ================= ADC =================
+/* ================= ADC ================= */
 static void ADC1_Config(void)
 {
     // Enable GPIOA and ADC1 clocks
@@ -92,12 +93,12 @@ static void ADC1_Config(void)
     RCC->CFGR &= ~(0x3U << 14);
     RCC->CFGR |=  (0x2U << 14);
 
-    // Configure PA0–PA2 as analog inputs (ADC_CH0–CH2)
+    // Configure PA0â€“PA2 as analog inputs (ADC_CH0â€“CH2)
     GPIOA->CRL &= ~((0xF << (ADC_CH0 * 4)) |
                     (0xF << (ADC_CH1 * 4)) |
                     (0xF << (ADC_CH2 * 4)));
 
-    // Configure sample time for channels 0–2 to 239.5 cycles
+    // Configure sample time for channels 0â€“2 to 239.5 cycles
     ADC1->SMPR2 &= ~((0x7U << (3 * ADC_CH0)) |
                      (0x7U << (3 * ADC_CH1)) |
                      (0x7U << (3 * ADC_CH2)));
@@ -140,7 +141,7 @@ static void ADC1_DMA_ConFig(void)
     ADC1->CR2 &= ~(1U << 20);                 // EXTTRIG = 0 (disable external trigger)
 }
 
-// ================= DMA =================
+/* ================= DMA ================= */
 static void DMA1_CH1_Config(void)
 {
     // Enable DMA1 clock
@@ -181,7 +182,7 @@ static void Start_ADC_Conversions(void)
     ADC1->CR2 |= (1U << 22);   // SWSTART = 1  start continuous conversions
 }
 
-// ================= SysTick delay =================
+/* ================= SysTick delay ================= */
 static void delay_ms(uint32_t ms)
 {
     
@@ -189,10 +190,10 @@ static void delay_ms(uint32_t ms)
     SysTick->VAL  = 0U;
     SysTick->CTRL = (1U << 2) | (1U << 0); // CLKSOURCE = HCLK, ENABLE = 1
 
-    while (ms--)
-		{
-     while (!(SysTick->CTRL & (1U << 16))); // Wait for COUNTFLAG
-		}
+    while (ms--) 
+    { 
+		while (!(SysTick->CTRL & (1U << 16))); // Wait for COUNTFLAG 
+    }
 
     SysTick->CTRL = 0;
     SysTick->VAL  = 0;
