@@ -4,7 +4,7 @@
 #include <string.h>
 #include <math.h>
 
-#define BAUD_9600_BRR   0x1D4C    // Pre-calculated for 72MHz -> 9600 baud
+#define BAUD_9600_BRR   0x1D4C    //  9600 baud
 #define SYSCLK_HZ       72000000UL
 
 
@@ -33,18 +33,18 @@ int main(void)
 	System_Init();
 	
 	float setTemp = 35.0f;  // Nhiet Do Muc Tieu
-  char buffer[64];
+    char buffer[64];
 	
 	 while (1)
     {
         uint16_t adc_val = readADC_Avg(5);
-        float temp = (adc_val * 3.3f / 4095.0f) * 100.0f; // LM35: 10mV/°C
+        float temp = (adc_val * 3.3f / 4095.0f) * 100.0f; // LM35: 10mV/Â°C -> 1V / 100Â°C
 
-        // ====== PID ======
+        /* ====== PID ====== */
        float duty = PID_Update(setTemp, temp);
 
-        // Cap nhat PWM duty
-       
+        
+	    // Cap nhat PWM duty     
         TIM4->CCR4 = (duty * (TIM4->ARR + 1)) / 100;
 
         sprintf(buffer, "Temp=%.1fC | Duty=%.1f%%\r\n", temp, duty);
@@ -58,7 +58,7 @@ int main(void)
 
 float PID_Update(float set, float real)
 {
-    float dt = 0.5f;                 // Thoi gian chu ki PID (0.5 giây)
+    float dt = 0.5f;                 // Thoi gian chu ki PID (0.5 giÃ¢y)
     float error = set - real;        // Sai so
 
     // Vung chet (deadband): bo qua sai so nho de tranh dao dong
@@ -69,7 +69,7 @@ float PID_Update(float set, float real)
     if (integral > 100) integral = 100;
     if (integral < -100) integral = -100;
 
-    // Thanh phan vi phân (D)
+    // Thanh phan vi phÃ¢n (D)
     float derivative = (error - prev_error) / dt;
     prev_error = error;
 
@@ -158,16 +158,16 @@ static void ADC1_Config(void)
     ADC1->CR2 |= (1U << 3); while (ADC1->CR2 & (1U << 3)); // RSTcal -> Reset Cal
     ADC1->CR2 |= (1U << 2); while (ADC1->CR2 & (1U << 2)); // Calibrate
 	
-	  ADC1->CR2 |= (1U << 1);               // CONT mode
+	ADC1->CR2 |= (1U << 1);               // CONT mode
     ADC1->SQR3 = 0;                       // Channel 0 (PA0)
-	  ADC1->CR2 |= (1U << 0); // Bat ADC lan 2 sau khi calibrate
+	ADC1->CR2 |= (1U << 0); // Bat ADC lan 2 sau khi calibrate
     ADC1->CR2 |= (1U << 22);              // SWSTART (start conversion)
 }
 static uint16_t readADC(void)
 {
     while (!(ADC1->SR & (1U << 1)));
 	
-	  ADC1->SR &= ~(1U << 1);          // xóa EOC (truong hop ADC liên tuc)
+	  ADC1->SR &= ~(1U << 1);          // xÃ³a EOC (truong hop ADC liÃªn tuc)
     return ADC1->DR;
 }
 
