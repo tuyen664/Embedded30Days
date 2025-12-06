@@ -137,7 +137,7 @@ static void TIM4_PWM_Init(void)
     GPIOB->CRH |=  (0x0B << 4);
 
     TIM4->PSC = 71;              // 1MHz timer clock (72MHz / (71+1))
-    TIM4->ARR = 1000 - 1;       // 1khz PWM -> led muot
+    TIM4->ARR = 1000 - 1;       // 1khz PWM -> LED
     TIM4->CCR4 = 0;           // duty = 0
 	
     TIM4->CCMR2 |= (6U << 12) | (1U << 11); 
@@ -162,7 +162,7 @@ static void TIM3_PWM_Init(void)
     GPIOB->CRH |=  (0x0B << 24); // PB6 AF Push-Pull
 
     TIM3->PSC = 71;              // 1MHz timer clock (72MHz / (71+1))
-    TIM3->ARR = 1000 - 1;        // 1khz PWM -> led muot
+    TIM3->ARR = 40 - 1;        // 25khz PWM -> FAN
     TIM3->CCR1 = 0;              // duty = 0
 	
     TIM3->CCMR1 |= (6U << 4) | (1U << 3); 
