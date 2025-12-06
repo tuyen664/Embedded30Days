@@ -16,6 +16,7 @@ static void TIM4_PWM_Init(void);
 
 static void SysTick_Init(void);
 static void delay_ms(uint32_t ms);
+static uint32_t millis (void);
 
 static void ADC1_Config(void);
 static uint16_t readADC_Avg(uint8_t samples);
