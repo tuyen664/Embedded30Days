@@ -1,5 +1,7 @@
 ## Mục tiêu
 
+Sử dụng bộ điều khiển PID cho FAN để đưa nhiệt độ mà LM35 đo được tại môi trường về mong muốn
+
 
 ## Giải thích 
 
