@@ -19,7 +19,9 @@
 
   Khi sáng -> ADC giảm
 
-- Thiết kế khi trời càng sáng thì LED càng tối , trời càng tối thì càng sáng 
+- Thiết kế khi trời càng sáng thì LED càng tối , trời càng tối thì càng sáng
+
+  ```uint16_t dutyLed = 100 - (uint16_t) (adcLdr / 4095.0f * 100);```
 
    
    
