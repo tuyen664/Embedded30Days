@@ -58,7 +58,12 @@ int main(void)
 
 float PID_Update(float set, float real)
 {
-    float dt = 0.5f;                 // Thoi gian chu ki PID (0.5 giây)
+
+	static uint32_t last = 0; // goi static thi chi khoi tao 1 lan duy nhat
+    uint32_t now = millis();
+    float dt = (now - last) / 1000.0f;
+    last = now;
+	
     float error = set - real;        // Sai so
 
     // Vung chet (deadband): bo qua sai so nho de tranh dao dong
