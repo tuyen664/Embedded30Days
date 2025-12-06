@@ -3,12 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-// ================== CONFIG CONSTANTS ==================
+/* ================== CONFIG CONSTANTS ================== */
 #define SYSCLK_HZ       72000000UL
 #define UART_BAUDRATE   9600U
 
-#define SERVO_MIN_US    600U      // Minimum pulse width for servo (˜0°)
-#define SERVO_MAX_US    2400U     // Maximum pulse width for servo (˜180°)
+#define SERVO_MIN_US    600U      // Minimum pulse width for servo (Ëœ0Â°)
+#define SERVO_MAX_US    2400U     // Maximum pulse width for servo (Ëœ180Â°)
 #define PWM_FREQ_HZ     50U       // 50Hz = 20ms period (standard servo)
 
 #define ADC_CHANNELS    3         // Using 3 ADC channels: PA0, PA1, PA2
@@ -18,13 +18,13 @@
 
 #define MANUAL_TIMEOUT_MS  5000   // Return to auto mode after 5s idle
 
-// ================== GLOBAL VARIABLES ==================
+/* ================== GLOBAL VARIABLES ================== */
 static volatile uint16_t adc_buf[ADC_CHANNELS];
 static uint32_t last_manual_time = 0;
 static uint8_t manual_mode = 0;
 
 
-// ================== FUNCTION PROTOTYPES ==================
+/* ================== FUNCTION PROTOTYPES ==================*/
 static void System_Init(void);
 static void UART1_Init(void);
 static void UART1_SendString(const char *s);
@@ -40,7 +40,7 @@ static void ADC1_Config(void);
 static void ADC1_DMA_Config(void);
 static void DMA1_CH1_Config(void);
 
-// ================== MAIN ==================
+
 int main(void)
 {
     char msg[64];
@@ -56,18 +56,18 @@ int main(void)
     Servo_SetAngle(servo_angle);
 
     // Start continuous ADC conversion
-	  ADC1_StartConversion();
+	ADC1_StartConversion();
 	
     while (1)
     {
 			
-        // ----- UART Command (Manual Servo Control) -----
+        /* ----- UART Command (Manual Servo Control) ----- */
         
        if (USART1->SR & (1U << 5)) // RXNE flag = 1 (data received)
         {
             char c = UART1_ReceiveChar();
 					
-					 if (i == 0) // nhap ki tu dau tien la auto stop ngay
+			if (i == 0) // nhap ki tu dau tien la auto stop ngay
             {
               manual_mode = 1;
               last_manual_time = millis(); // luu lai thoi diem bat dau manual , qua 5s chuyen auto
@@ -81,12 +81,12 @@ int main(void)
                 if (angle > 180) angle = 180;
 				
                 Servo_SetAngle((uint8_t)angle);
-							
-							  sprintf(msg, " \r\n Set servo %d deg \r\n",angle);
+			    sprintf(msg, " \r\n Set servo %d deg \r\n",angle);
+				
                 UART1_SendString(msg);
                 
-                i = 0;
-
+                
+		        i = 0;			
                 manual_mode = 1;
                 last_manual_time = millis();
             }
@@ -98,22 +98,26 @@ int main(void)
             {
                 i = 0; // reset buffer on invalid char
             } */
-						else if (c < '0' || c > '9') 
-						{
-							// invalid char -> ignore, do not reset
-						}
+		   else if (c < '0' || c > '9') 
+		   {
+			// invalid char -> ignore, do not reset
+		   }
         }
 
-        // ----- Auto Servo Control (based on ADC values) -----
+
+        /* ----- Auto Servo Control (based on ADC values) ----- */
+
         if (manual_mode == 0 || (millis() - last_manual_time > MANUAL_TIMEOUT_MS))
         {
             manual_mode = 0; // back to auto mode
+			
             if (millis() - last_auto_update > 500)
             {
                 last_auto_update = millis();
 							
-							 // ----- Read ADC values -----
-							 for (uint8_t ch = 0; ch < ADC_CHANNELS; ch++)
+				/* ----- Read ADC values ----- */
+				
+			    for (uint8_t ch = 0; ch < ADC_CHANNELS; ch++)
                 volts[ch] = (adc_buf[ch] * VREF) / ADC_RES;
 
                 sprintf(msg, "CH1=%.2fV  CH2=%.2fV  CH3=%.2fV\r\n",
@@ -124,13 +128,13 @@ int main(void)
              
                 float right = volts[2];
 
-                // Simple decision logic
+               
                 if (left > right + 0.3f)
-                    servo_angle = 180;   // turn left
+                    servo_angle = 180;   
                 else if (right > left + 0.3f)
-                    servo_angle = 0;    // turn right
+                    servo_angle = 0;   
                 else
-                    servo_angle = 90;    // center
+                    servo_angle = 90;   
 
                 Servo_SetAngle(servo_angle);
                 
@@ -141,7 +145,7 @@ int main(void)
     }
 }
 
-// ================== SYSTEM INITIALIZATION ==================
+/* ================== SYSTEM INITIALIZATION ================== */
 static void System_Init(void)
 {
     SysTick_Init();
@@ -152,7 +156,7 @@ static void System_Init(void)
     DMA1_CH1_Config();
 }
 
-// ================== UART1 ==================
+/* ================== UART1 ================== */
 static void UART1_Init(void)
 {
     RCC->APB2ENR |= (1U << 2) | (1U << 14); // Enable GPIOA + USART1 clocks
@@ -181,7 +185,7 @@ static char UART1_ReceiveChar(void)
 } 
 
 
-// ================== SERVO (PWM - TIM4_CH4 PB9) ==================
+/* ================== SERVO (PWM - TIM4_CH4 PB9) ================== */
 static void TIM4_PWM_Init(void)
 {
     RCC->APB2ENR |= (1U << 3); // GPIOB clock
@@ -216,7 +220,7 @@ static void Servo_SetAngle(uint8_t angle)
     TIM4->CCR4 = pulse;
 }
 
-// ================== ADC + DMA ==================
+/* ================== ADC + DMA ================== */
 static void ADC1_Config(void)
 {
     RCC->APB2ENR |= (1U << 2) | (1U << 9); // GPIOA + ADC1 clock
@@ -282,7 +286,7 @@ static void ADC1_StartConversion(void)
   ADC1->CR2 |= (1U << 22);     // Start conversion (SWSTART)	
 }
 
-// ================== DELAY (SYSTICK) ==================
+/* ================== DELAY (SYSTICK) ================== */
 volatile uint32_t tick_ms = 0;
 
 static void SysTick_Init(void)
