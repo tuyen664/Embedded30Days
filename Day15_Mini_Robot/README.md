@@ -43,5 +43,5 @@
 - Không gửi gì 5 giây → hệ thống tự chuyển về Auto Mode
 
 
-## Ảnh chụp 
+## Video
 
