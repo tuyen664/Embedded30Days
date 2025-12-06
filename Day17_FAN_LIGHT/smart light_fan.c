@@ -4,7 +4,7 @@
 #include <string.h>
 #include <math.h>
 
-#define BAUD_9600_BRR   0x1D4C    // Pre-calculated for 72MHz -> 9600 baud
+#define BAUD_9600_BRR   0x1D4C    // 9600 baud
 #define SYSCLK_HZ       72000000UL
 
 
@@ -35,14 +35,14 @@ int main(void)
 	System_Init();
 	
 	float setTemp = 35.0f;  // Nhiet Do Muc Tieu
-  char buffer[100];
+    char buffer[100];
 	
 	 while (1)
     {
-      uint16_t adcTemp = readADC_Avg(0 , 5 ); // LM35
+            uint16_t adcTemp = readADC_Avg(0 , 5 ); // LM35
 			uint16_t adcLdr = readADC_Avg( 1 , 5 );  // LDR
 			
-			float tempC = (adcTemp * 3.3f / 4095.0f) / 0.01f;   // LM35: 10mV/°C
+			float tempC = (adcTemp * 3.3f / 4095.0f) / 0.01f;   // LM35: 10mV/Â°C
 			
 			uint16_t dutyFan = (uint16_t)PID_Update(setTemp, tempC);
 			uint16_t dutyLed = 100 - (uint16_t) (adcLdr / 4095.0f * 100);
@@ -51,7 +51,7 @@ int main(void)
 			TIM3->CCR1 = (dutyLed * (TIM3->ARR + 1)) / 100;
 			
 			sprintf(buffer, "Temp=%.1fC,Fan=%d%%,LED=%d%%\r\n",
-                tempC, dutyFan, dutyLed);
+            tempC, dutyFan, dutyLed);
 			
 			UART1_SendString(buffer);
 		
@@ -63,7 +63,7 @@ int main(void)
 
 float PID_Update(float set, float real)
 {
-	  static uint32_t last = 0; // goi static thi chi khoi tao 1 lan duy nhat
+	static uint32_t last = 0; // goi static thi chi khoi tao 1 lan duy nhat
     uint32_t now = millis();
     float dt = (now - last) / 1000.0f;
     last = now;
@@ -79,7 +79,7 @@ float PID_Update(float set, float real)
     if (integral > 100) integral = 100;
     if (integral < -100) integral = -100;
 
-    // Thanh phan vi phân (D)
+    // Thanh phan vi phÃ¢n (D)
     float derivative = (error - prev_error) / dt;
     prev_error = error;
 
@@ -100,9 +100,9 @@ static void System_Init(void)
 {
     SysTick_Init();
     UART1_Init();
-    TIM4_PWM_Init(); // PWM FAN (PB9)
-	  TIM3_PWM_Init();           // PWM LED (PB6)
-    ADC1_Config(); // Cau hinh ADC1 doc kênh 0 & 1
+    TIM4_PWM_Init();   // PWM FAN (PB9)
+	TIM3_PWM_Init();   // PWM LED (PB6)
+    ADC1_Config();     // Cau hinh ADC1 doc kÃªnh 0 & 1
 }
 
 static void UART1_Init(void)
@@ -162,8 +162,8 @@ static void TIM3_PWM_Init(void)
     GPIOB->CRH |=  (0x0B << 24); // PB6 AF Push-Pull
 
     TIM3->PSC = 71;              // 1MHz timer clock (72MHz / (71+1))
-    TIM3->ARR = 1000 - 1;       // 1khz PWM -> led muot
-    TIM3->CCR1 = 0;           // duty = 0
+    TIM3->ARR = 1000 - 1;        // 1khz PWM -> led muot
+    TIM3->CCR1 = 0;              // duty = 0
 	
     TIM3->CCMR1 |= (6U << 4) | (1U << 3); 
 	// OC4M = 110 (6-4) -> PWM MODE 1  , OC4PE = 1 (bit 3) -> enable Preload
@@ -194,9 +194,9 @@ static void ADC1_Config(void)
     ADC1->CR2 |= (1U << 3); while (ADC1->CR2 & (1U << 3)); // RSTcal -> Reset Cal
     ADC1->CR2 |= (1U << 2); while (ADC1->CR2 & (1U << 2)); // Calibrate
 	
-	  ADC1->CR2 |= (1U << 1);               // CONT mode
+	ADC1->CR2 |= (1U << 1);               // CONT mode
    
-	  ADC1->CR2 |= (1U << 0); // Bat ADC lan 2 sau khi calibrate
+	ADC1->CR2 |= (1U << 0); // Bat ADC lan 2 sau khi calibrate
     ADC1->CR2 |= (1U << 22);              // SWSTART (start conversion)
 }
 static uint16_t readADC(uint8_t channel)
@@ -205,7 +205,7 @@ static uint16_t readADC(uint8_t channel)
 	  ADC1->CR2 |= (1U << 22);       // SWSTART: start convert
     while (!(ADC1->SR & (1U << 1)));
 	
-	  ADC1->SR &= ~(1U << 1);          // xóa EOC (truong hop ADC liên tuc)
+	  ADC1->SR &= ~(1U << 1);          // xÃ³a EOC (truong hop ADC liÃªn tuc)
     return ADC1->DR;
 }
 
