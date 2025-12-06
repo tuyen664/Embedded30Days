@@ -8,7 +8,7 @@
 - ADC chạy liên tục ở chế độ scan mode + DMA
 - Servo ở TIM4_CH4 (PB9)
 
-  ## Phần cứng và phần mềm
+## Phần cứng và phần mềm
 
 - STM32F103C8T6
 - Keil C / STM32CubeIDE
