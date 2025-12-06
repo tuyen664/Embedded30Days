@@ -208,6 +208,10 @@ static void delay_ms(uint32_t ms)
     while ((tick_ms - start) < ms);
 }
 
+static uint32_t millis (void)
+{ 
+	return tick_ms ;
+}
 
 
 
