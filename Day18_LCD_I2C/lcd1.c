@@ -51,7 +51,8 @@ int main(void)
     DelayMs(100);
 
     lcd_addr = LCD_AutoDetectAddr();
-    if (!lcd_addr) {
+    if (!lcd_addr) 
+	{
         UART1_SendString("[ERR] LCD not found on I2C bus!\r\n");
         while (1);
     }
@@ -112,7 +113,8 @@ static void UART1_Init(void)
 }
 static void UART1_SendString(const char *s)
 {
-    while (*s) {
+    while (*s) 
+	{
         while (!(USART1->SR & (1U << 7)));
         USART1->DR = *s++;
     }
@@ -153,7 +155,7 @@ static uint8_t I2C1_Write(uint8_t addr, uint8_t *data, uint8_t len)
     {
         I2C1->CR1 |= (1U << 9);  // Goi STOP
         (void)I2C1->SR1; 
-        (void)I2C1->SR2;          // Ðoc de clear ADDR/AF
+        (void)I2C1->SR2;          // Ãoc de clear ADDR/AF
         return 0;                 // Bao loi
     }
 			
@@ -175,7 +177,7 @@ static uint8_t I2C1_Write(uint8_t addr, uint8_t *data, uint8_t len)
 
     t0 = msTicks; 
 		while (!(I2C1->SR1 & (1U << 2))) // BTF - du lieu truyen Finished
-    {
+        {
 		if ((msTicks - t0) > I2C_TIMEOUT_MS) return 0;
 		}
     I2C1->CR1 |= (1U << 9); // STOP
@@ -186,7 +188,7 @@ static uint8_t I2C1_Write(uint8_t addr, uint8_t *data, uint8_t len)
 static void LCD_SendCmd(uint8_t addr, uint8_t cmd)
 {
 	
-	// bien byte lenh cmd thành 4 gói du lieu I2C  gui qua chip PCF8574.
+	// bien byte lenh cmd thÃ nh 4 gÃ³i du lieu I2C  gui qua chip PCF8574.
 	
     uint8_t data[4];  // 4byte
     uint8_t upper = cmd & 0xF0; // 4 bit hight
@@ -264,8 +266,8 @@ static void LCD_Init(uint8_t addr)
     LCD_SendCmd(addr, 0x06); // sau khi ghi 1 ki tu , con tro tu dong nhay sang phai
     LCD_SendCmd(addr, 0x0C); // 0 0 0 0 1 D C B -> 1100
 	// Bit 2 (D): Display ON/OFF
-  // Bit 1 (C): Cursor ON/OFF
-  // Bit 0 (B): Blink ON/OFF nhay con tro
+    // Bit 1 (C): Cursor ON/OFF
+    // Bit 0 (B): Blink ON/OFF nhay con tro
 }
 
 /* ===================== AUTO-DETECT I2C ADDRESS ===================== */
