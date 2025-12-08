@@ -33,9 +33,7 @@ int main(void)
 	  
     Clock_Init();
 	
-	  
-	 
-	  SystemCoreClockUpdate();
+	SystemCoreClockUpdate();
     SysTick_Init();
     LCD_Init();
 
@@ -50,7 +48,7 @@ int main(void)
     LCD_Print("No I2C Needed!");
 
     LCD_SetCursor(3, 0);
-    LCD_Print("4-bit Parallel OK!");
+    LCD_Print("4-bit OK!");
 	
 	 
 
@@ -72,7 +70,7 @@ static void Clock_Init(void)
     while (!(RCC->CR & (1U << 25)));           // Wait PLLRDY
     RCC->CFGR |= (2U << 0);                    // SW=PLL
 	
-	  RCC->CFGR &= ~(3U << 0);
+	RCC->CFGR &= ~(3U << 0);
     while (((RCC->CFGR >> 2) & 3U) != 2U);     // Wait PLL selected
 }
 
@@ -98,7 +96,7 @@ static inline void DelayMs(uint32_t ms)
 /* ===================== LCD LOW LEVEL ===================== */
 static void LCD_GPIO_Init(void)
 {
-    // 1. GPIOA
+  
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 
     
@@ -129,10 +127,10 @@ static void LCD_Enable(void)
 
 static void LCD_Send4Bit(uint8_t data)
 {
-    // Clear D4–D7
+    // Clear D4â€“D7
     LCD_PORT->BRR = LCD_D4 | LCD_D5 | LCD_D6 | LCD_D7;
 
-    // Set corresponding bits
+    
     if (data & (1 << 4)) LCD_PORT->BSRR = LCD_D4;
     if (data & (1 << 5)) LCD_PORT->BSRR = LCD_D5;
     if (data & (1 << 6)) LCD_PORT->BSRR = LCD_D6;
@@ -143,9 +141,9 @@ static void LCD_Send4Bit(uint8_t data)
 
 static void LCD_SendCmd(uint8_t cmd)
 {
-    LCD_PORT->BRR = LCD_RS;           // RS = 0  Gui lenh
-    LCD_Send4Bit(cmd & 0xF0);      // Gui 4 bit cao
-    LCD_Send4Bit((cmd << 4) & 0xF0);        // Gui 4 bit thap
+    LCD_PORT->BRR = LCD_RS;            // RS = 0  Gui lenh
+    LCD_Send4Bit(cmd & 0xF0);          // Gui 4 bit cao
+    LCD_Send4Bit((cmd << 4) & 0xF0);   // Gui 4 bit thap
     DelayMs(2);
 }
 
@@ -197,7 +195,7 @@ static void LCD_Init(void)
     DelayMs(5);
     LCD_Send4Bit(0x20); // Chuyen sang 4-bit mode
 	
-	  DelayMs(2);
+	DelayMs(2);
 
     LCD_SendCmd(0x28); // 4-bit, 2 line, 5x8 font
     LCD_SendCmd(0x0C); // Display ON, Cursor OFF
