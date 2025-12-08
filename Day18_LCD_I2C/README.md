@@ -192,7 +192,7 @@ while (!(I2C1->SR1 & (1U << 2))) // BTF: Byte Transfer Finished
 
 - LCD dùng giao tiếp 4-bit  : Không gửi cả byte 8-bit một lần
 - Tách thành Upper 4 bits và Lower 4 bits (2byte)
-- Mỗi 4-bit được gửi qua PCF8574 qua I2C → rồi được xuất ra các chân D4..D7 của LCD
+- Mỗi 4-bit được gửi qua I2C module PCF8574 → rồi được xuất ra các chân D4..D7 của LCD
 - Quan trọng : LCD chỉ chấp nhận dữ liệu khi tín hiệu Enable (E) chuyển từ 1 → 0
 - Vì vậy, mỗi nibble cần 2 lần gửi: 1 lần với E=1 , 1 lần với E=0
 -> Tổng cộng: Upper (2 byte) + Lower (2 byte) = 4 byte I2C
