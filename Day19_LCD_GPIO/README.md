@@ -1,10 +1,10 @@
 # LCD 4-bit (GPIO)
 
-## Mô tả ngắn
+## Tổng quan
 
-- Code điều khiển một màn hình LCD chuẩn HD44780 ( 20×4) bằng chế độ 4-bit song song (D4–D7)
+- Điều khiển màn hình LCD chuẩn HD44780 ( 20×4) bằng chế độ 4-bit song song (D4–D7)
 - Các chân dùng GPIO (không phải I2C)
-- Mỗi byte (lệnh hoặc dữ liệu) được gửi thành hai nửa (high nibble rồi low nibble); mỗi nửa được "latch" bằng một xung EN.
+- Mỗi byte (lệnh hoặc dữ liệu) được gửi thành hai nửa (high nibble rồi low nibble); mỗi nửa được "latch" bằng một xung EN
 
 
 ## Sơ đồ chân (theo code)
@@ -24,7 +24,7 @@
 
 **1. LCD_GPIO_Init()**
 - Bật clock cho GPIOA
-- Cấu hình PA2..PA7 là Output push-pull, MODE = 50MHz (MODE=11, CNF=00)
+- Cấu hình PA2..PA7 là Output push-pull 50MHz (MODE=11, CNF=00)
 - Clear các pin đầu ra (BRR) để đảm bảo RS, EN, D4..D7 = 0 lúc khởi động
 - **Lưu ý:** nếu để nhầm Open-Drain hoặc input — LCD sẽ không phản hồi
 
@@ -47,22 +47,27 @@ DelayMs(1);
 **4. LCD_SendCmd(uint8_t cmd) và LCD_SendData(uint8_t data)**
 - **LCD_SendCmd:**
 - RS = 0 (BRR RS)
-- Gửi cmd & 0xF0 bằng LCD_Send4Bit() (high nibble)
-- Gửi (cmd << 4) & 0xF0 bằng LCD_Send4Bit() (low nibble)
+- Gửi high nibble :  cmd & 0xF0 bằng LCD_Send4Bit() 
+- Gửi low nibble : (cmd << 4) & 0xF0 bằng LCD_Send4Bit()
 - Delay 2 ms
 - **LCD_SendData:**
 - RS = 1 (BSRR RS)
 - Gửi high nibble rồi low nibble như trên
 - Delay 2 ms
-- **lưu ý** : RS=1 khi gửi dữ kí tự  hoặc RS=0 khi gửi lệnh. Nếu nhấm sẽ khiến LCD hiển thị vô lý hoặc bỏ lệnh.
+- **lưu ý** : RS=1 khi gửi data / RS=0 khi gửi lệnh. Nếu nhấm sẽ khiến LCD hiển thị sai
 
 **5. LCD_SetCursor(int8_t row, int8_t col)**
 - Giới hạn row trong 0..3 và col trong 0..19
 - Quy ước địa chỉ DDRAM (HD44780 20×4):
-- row0 start = 0x80
-- row1 start = 0xC0
-- row2 start = 0x94
-- row3 start = 0xD4
+
+    row0 start = 0x80
+
+    row1 start = 0xC0
+
+    row2 start = 0x94
+
+    row3 start = 0xD4
+  
 - Tính pos = start + col, rồi LCD_SendCmd(pos)
 - **Lưu ý** : địa chỉ DDRAM không liên tục theo dòng trong mô tả vật lý
 
@@ -101,28 +106,40 @@ LCD_Print("4-bit Parallel OK!");
 
 **9. Các lưu ý quan trọng**
 
-- LCD 4-bit KHÔNG BAO GIỜ dùng bit thấp (D0–D3) → Vì vậy mọi thứ phải dồn lên 4 bit cao (D7–D4).
-- LCD chỉ lấy dữ liệu khi EN chuyển từ 1 → 0 → Nếu EN quá ngắn hoặc không xuống mức thấp đúng lúc → LCD không nhận lệnh.
+- LCD 4-bit KHÔNG BAO GIỜ dùng bit thấp (D0–D3) → Vì vậy mọi thứ phải dồn lên 4 bit cao (D7–D4)
+- LCD chỉ lấy dữ liệu khi EN chuyển từ 1 → 0 → Nếu EN quá ngắn hoặc không xuống mức thấp đúng lúc → LCD không nhận lệnh
 - Lệnh Clear (0x01) và Home (0x02) cần delay dài (≥ 1.52ms)
 - Khi gửi low-nibble, phải shift trái 4 bit
--> Vì D7–D4 của LCD là 4 bit cao của byte bạn viết vào. 
+  
+  -> Vì D7–D4 của LCD là 4 bit cao của byte bạn viết vào
+   
 - LCD INIT là phần khó nhất : Nếu gửi sai 1 bước → LCD không vào chế độ 4-bit
 - Địa chỉ DDRAM của HD44780 KHÔNG liên tục theo dòng
--> 20×4 map theo: 0x80, 0xC0, 0x94, 0xD4
+  
+  -> 20×4 map theo: 0x80, 0xC0, 0x94, 0xD4
+  
 - LCD phải dùng nguồn 5V ngoài
 - Không được chạy EN quá nhanh 
 - BSRR và BRR là các thanh ghi bắt buộc phải dùng
--> Không được dùng ODR kiểu LCD_PORT->ODR |= ..., dễ gây lỗi. 
-- ví dụ LCD_PORT->ODR |= (1 << D4);  // set bit cần 1 ,  Nhưng còn các bit cần 0 thì sao?
-- OR không thể “ép” chúng về 0 được,Chúng sẽ mang giá trị rác (giá trị cũ từ chu kỳ trước). 
+  
+  -> Không được dùng ODR kiểu LCD_PORT->ODR |= ..., dễ gây lỗi
+  
+    ví dụ LCD_PORT->ODR |= (1 << D4);  // set bit lên 1 ,  Nhưng còn các bit cần 0 thì sao?
+    OR không thể “ép” chúng về 0 được,Chúng sẽ mang giá trị rác (giá trị cũ từ chu kỳ trước) 
 
 - Các bước CPU thực sự khi phép toán ODR |= (1<<x) là:
-- CPU đọc ODR (toàn 16 bit)
-- CPU sửa 1 bit
-- CPU ghi lại ODR (toàn 16 bit)
-- Các chân không liên quan cũng bị ghi lại
-- Nếu thời điểm đó một ngắt đang thay đổi ODR → glitch
-- Nếu pin khác đang dùng cho UART/SPI/I2C/ADC — rất nguy hiểm 
+  
+     CPU đọc ODR (toàn 16 bit)
+  
+     CPU sửa 1 bit
+  
+     CPU ghi lại ODR (toàn 16 bit)
+  
+     Các chân không liên quan cũng bị ghi lại
+  
+     Nếu thời điểm đó một ngắt đang thay đổi ODR → glitch
+  
+     Nếu pin khác đang dùng cho UART/SPI/I2C/ADC — rất nguy hiểm 
 
 
 ## Ảnh chụp 
