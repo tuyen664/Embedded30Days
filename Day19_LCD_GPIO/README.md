@@ -47,8 +47,8 @@ DelayMs(1);
 **4. LCD_SendCmd(uint8_t cmd) và LCD_SendData(uint8_t data)**
 - **LCD_SendCmd:**
 - RS = 0 (BRR RS)
-- Gửi high nibble :  cmd & 0xF0 bằng LCD_Send4Bit() 
-- Gửi low nibble : (cmd << 4) & 0xF0 bằng LCD_Send4Bit()
+- Gửi high nibble :  LCD_Send4Bit(cmd & 0xF0);  
+- Gửi low nibble :  LCD_Send4Bit((cmd << 4) & 0xF0) ;
 - Delay 2 ms
 - **LCD_SendData:**
 - RS = 1 (BSRR RS)
