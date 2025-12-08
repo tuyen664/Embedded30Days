@@ -181,7 +181,7 @@ while (!(I2C1->SR1 & (1U << 2))) // BTF: Byte Transfer Finished
 
     HIGH → MCU thả ra, không điều khiển → điện trở pull-up kéo lên
 
-  - Tạo Stop bằng  SDA kéo SDA lên HIGHT , trong khi SCL vẫn HIGH
+- Tạo Stop bằng  SDA kéo SDA lên HIGHT , trong khi SCL vẫn HIGH
 
 ## 3. static void LCD_SendCmd(uint8_t addr, uint8_t cmd)
 
