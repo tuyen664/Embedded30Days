@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  * @file    : main.c
- * @brief   : FreeRTOS Mutex Demo – Shared Resource Protection (UART)
+ * @brief   : FreeRTOS Mutex Demo â€“ Shared Resource Protection (UART)
  ******************************************************************************
  */
 
@@ -42,7 +42,7 @@ int main(void)
     SystemClock_Config();
     GPIO_Config();
     UART1_Config(9600);
-	  ADC1_Config();
+	ADC1_Config();
 
     UART1_SendString("\r\n[SYS] System Init OK\r\n");
 
@@ -59,7 +59,7 @@ int main(void)
     xTaskCreate(Task_Sensor, "Sensor", 256, NULL, 1, NULL);
     xTaskCreate(Task_Status, "Status", 256, NULL, 1, NULL);
     xTaskCreate(Task_Log,    "Log",    256, NULL, 1, NULL);
-		xTaskCreate(Task_ADC, "ADC", 384, NULL, 1, NULL);
+	xTaskCreate(Task_ADC, "ADC", 384, NULL, 1, NULL);
 
     vTaskStartScheduler();
     while (1);
@@ -217,7 +217,7 @@ static uint16_t readADC(uint8_t channel)
 	  ADC1->CR2 |= (1U << 22);       // SWSTART: start convert
     while (!(ADC1->SR & (1U << 1))); // wait EOC
 	
-	  ADC1->SR &= ~(1U << 1);          // xóa EOC (truong hop ADC liên tuc)
+	  ADC1->SR &= ~(1U << 1);          // xÃ³a EOC (truong hop ADC liÃªn tuc)
     return ADC1->DR;
 }
 
