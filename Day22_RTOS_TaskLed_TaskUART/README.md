@@ -259,7 +259,7 @@ for(;;)
 - Starvation xảy ra khi task “chiếm CPU quá nhiều” hoặc “luôn ready” → các task khác không được chạy
 - Nên : Delay hợp lý , Task yield khi cần , Scheduler preemption, tick ngắn, Chú ý priority và priority inheritance
 
-**Task gọi taskYIELD() :**
+  **Task gọi taskYIELD() :**
 
 - Scheduler kiểm tra: Có task nào priority bằng hoặc cao hơn đang ready không?
 - Nếu có → switch sang task đó ngay
@@ -279,7 +279,7 @@ for(;;)
 - Tick ngắn (1ms) → task delay 5ms gần như chính xác
 - Tick dài (10ms) → task delay 5ms → thực tế delay = 10ms, task khác bị chậm → project real-time bị ảnh hưởng
 
- **Priority inversion** xảy ra khi task có priority cao bị block bởi task priority thấp vì task thấp đang giữ resource chung (ví dụ mutex)
+  **Priority inversion** xảy ra khi task có priority cao bị block bởi task priority thấp vì task thấp đang giữ resource chung (ví dụ mutex)
 - Priority Inheritance giải pháp : Khi một task cao priority bị block vì task thấp priority đang giữ mutex, task thấp sẽ tạm thời được “thừa hưởng” priority của      task cao
 - Điều này giúp task thấp hoàn thành nhanh công việc và trả mutex, task cao sẽ chạy tiếp sớm hơn
 
