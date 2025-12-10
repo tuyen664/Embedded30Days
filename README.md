@@ -8,7 +8,7 @@
 - Quen với Git/GitHub, viết tài liệu kỹ thuật và quay video demo
 
 ## Tổng quan nội dung 30 ngày 
-- Ngày 1-8     : GPIO , Interrupt (SysTick , Timer , EXTI) , Debug cơ bản
+- Ngày 1-8          : GPIO , Interrupt (SysTick , Timer , EXTI) , Debug cơ bản
 - Ngày 9-12    : UART , ADC , DMA
 - Ngày 13-14   : PWM , SERVO
 - Ngày 15- 17  : Project tổng hợp
