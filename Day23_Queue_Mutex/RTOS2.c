@@ -140,7 +140,7 @@ static void Task_LED(void *pvParameters)
 
 static void Task_Button(void *pvParameters)
 {
-	  (void)pvParameters;
+	(void)pvParameters;
     uint8_t msg = 1;
     uint8_t prev = 1;
     const TickType_t debounce = pdMS_TO_TICKS(50);
@@ -150,7 +150,7 @@ static void Task_Button(void *pvParameters)
         uint8_t curr = (GPIOA->IDR & (1 << BUTTON_PIN)) ? 1 : 0;
         if (prev == 1 && curr == 0)
         {
-            xQueueSend(xQueueButton, &msg, 0); // 0 - khong doi
+            xQueueSend(xQueueButton, &msg, 0); // 0 - no wait
         }
         prev = curr;
         vTaskDelay(debounce);
@@ -159,7 +159,7 @@ static void Task_Button(void *pvParameters)
 
 static void Task_Button_UART(void *pvParameters)
 {
-	  (void)pvParameters;
+	(void)pvParameters;
     uint8_t recv;
     for (;;)
     {
