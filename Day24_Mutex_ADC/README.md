@@ -137,8 +137,10 @@ void EXTI0_IRQHandler(void)
 xQueueSendFromISR(queue, &value, &xHigherPriorityTaskWoken);
 ```
 - **Luật 100% đúng trong FreeRTOS**
-- "Mutex = Task-only"
--  "Binary Semaphore / Queue = ISR"
+  
+   "Mutex = Task-only"
+  
+   "Binary Semaphore / Queue = ISR"
 
 
 ## Video
