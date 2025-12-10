@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  * @file    : main.c
- * @brief   : FreeRTOS Demo – UART + LED + ADC + TIM2 + EXTI (EventGroup)
+ * @brief   : FreeRTOS Demo â€“ UART + LED + ADC + TIM2 + EXTI (EventGroup)
  ******************************************************************************
  */
 
@@ -158,10 +158,10 @@ static void EXTI1_Config(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
     AFIO->EXTICR[0] &= ~(0xF << 4); // PA1
-	  AFIO->EXTICR[0] |=  (0x0 << 4); // PA1 -> EXTI1
+	AFIO->EXTICR[0] |=  (0x0 << 4); // PA1 -> EXTI1
     EXTI->IMR  |= (1 << 1);
     EXTI->FTSR |= (1 << 1); // Falling edge trigger
-	  EXTI->RTSR &= ~(1 << 1);                 // Disable rising edge
+	EXTI->RTSR &= ~(1 << 1);                 // Disable rising edge
 
     NVIC_SetPriority(EXTI1_IRQn, 8);
     NVIC_EnableIRQ(EXTI1_IRQn);
@@ -187,7 +187,7 @@ void EXTI1_IRQHandler(void)
 
     if (EXTI->PR & (1 << 1)) // chi doc
     {
-        EXTI->PR = (1 << 1); // Clear pending flag , ghi |= khong nen , ghi 0 là giu nguyen , 1 la xoa
+        EXTI->PR = (1 << 1); // Clear pending flag , ghi |= khong nen , ghi 0 lÃ  giu nguyen , 1 la xoa
         xEventGroupSetBitsFromISR(xEventGroup, EVENT_BIT_BUTTON, &xHigherPriorityTaskWoken);
         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
     }
@@ -196,7 +196,7 @@ void EXTI1_IRQHandler(void)
 /* ================== TASK: EVENT HANDLER ================== */
 static void Task_EventHandler(void *pvParameters)
 {
-	 (void) pvParameters ;
+	(void) pvParameters ;
     EventBits_t uxBits;
 
     for (;;)
@@ -206,27 +206,28 @@ static void Task_EventHandler(void *pvParameters)
                     EVENT_BIT_TIMER | EVENT_BIT_BUTTON,
                     pdTRUE,    // Clear bits after received
                     pdFALSE,   // Wait any bit (OR)
-                    portMAX_DELAY);
+                    portMAX_DELAY   );
 
         if (uxBits & EVENT_BIT_TIMER)
         {
           
             if (xSemaphoreTake(xUART_Mutex, pdMS_TO_TICKS(50)) == pdTRUE)
-            {
+             {
                 UART1_SendString("[EVT] Timer tick\r\n");
                 xSemaphoreGive(xUART_Mutex);
-            }
-        }
+             }
+         }
 
         if (uxBits & EVENT_BIT_BUTTON)
         {
-					LED_TOGGLE();
+			LED_TOGGLE();
+			
             if (xSemaphoreTake(xUART_Mutex, pdMS_TO_TICKS(50)) == pdTRUE)
-            {
+              {
 							  
                 UART1_SendString("[EVT] Button pressed\r\n");
                 xSemaphoreGive(xUART_Mutex);
-            }
+              }
         }
     }
 }
