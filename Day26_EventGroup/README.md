@@ -2,7 +2,7 @@
 
 **1. Tính năng**
 - Sử dụng EventGroup để đồng bộ giữa ISR và task
-- Sử dụng Mutex để bảo vệ UART (tránh xung đột khi nhiều task gửi dữ liệu)
+- Sử dụng Mutex để bảo vệ UART (khi nhiều task gửi dữ liệu)
 - Đọc ADC liên tục, gửi giá trị qua UART
 - Nháy LED khi nút nhấn
 - Ghi log qua UART khi Timer tick hoặc nút nhấn
@@ -63,14 +63,16 @@ if (uxBits & EVENT_BIT_BUTTON) // toggle LED + log "[EVT] Button pressed"
 **Lưu ý :**
 
 - Trong project thực tế: Nhiều task log cùng UART → cần timeout khi lấy Mutex hoặc dùng queue thay vì trực tiếp gửi UART
-- Không dùng portMAX_DELAY trừ khi chắc chắn task release nhanh , Nên dùng timeout hợp lý,
-- Cân nhắc priority : 
-- Task cần log quan trọng → priority cao
-- Task không quan trọng → priority thấp
+- Không dùng portMAX_DELAY trừ khi chắc chắn task release nhanh , Nên dùng timeout hợp lý
+- Cân nhắc priority :
+  
+   Task cần log quan trọng → priority cao
+  
+   Task không quan trọng → priority thấp
+  
 - **Timeout có lợi hơn portMAX_DELAY:**
 - Task không block vô hạn
 - Giảm nguy cơ starvation
-- Cho phép fallback hoặc retry
 - Hệ thống nhiều task ổn định hơn
 ```c
 for (;;) 
@@ -97,16 +99,23 @@ for (;;)
 **3. Lưu ý quan trọng**
 - Không bao giờ lấy Mutex trong ISR → deadlock
 - Khi dùng xEventGroupWaitBits() : pdTRUE sẽ clear bit → nếu bit set nhiều lần trước khi task chạy, chỉ nhận 1 lần
-- pdFALSE → bit vẫn giữ → task sẽ nhận nhiều lần
+  
+   pdFALSE → bit vẫn giữ → task sẽ nhận nhiều lần
+  
 - Trong readADC_Avg() có vTaskDelay(pdMS_TO_TICKS(2))
-- Không dùng delay_ms() (busy wait) trong task → block CPU
+  
+   Không dùng delay_ms() (busy wait) trong task → block CPU
+  
 - Task_ADC: 384 → vì snprintf buffer + task call stack -> Nếu stack nhỏ → crash trong runtime
 
-- uxBits trả về một giá trị kiểu EventBits_t, chứa tập hợp các bit đã được set tại thời điểm hàm được thỏa mãn.
+- uxBits trả về một giá trị kiểu EventBits_t, chứa tập hợp các bit đã được set tại thời điểm hàm được thỏa mãn
 - uxBits là một giá trị 8/16/32-bit (tùy config), thường là uint32_t, chứa:
-- 1 << 0 nếu Timer event
-- 1 << 1 nếu Button event
-- hoặc cả hai: 0b00000011
+  
+    1 << 0 nếu Timer event
+  
+    1 << 1 nếu Button event
+  
+    hoặc cả hai: 0b00000011
 
 ## Video
 
