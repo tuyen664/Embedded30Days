@@ -29,13 +29,17 @@ static void Task_Button(void *pvParameters)
 **1. Tổng quan**
 - Hàm nay đọc nút nhấn PA1 , phát hiện sườn xuống (1 -> 0) , debounce 50ms , gửi 1 message (1 byte) vào queue khi nút được nhấn
 - không chờ queue -> xử lý nhanh , tránh blocking
-- **uint8_t msg = 1;** -> giá trị được gửi vào queue khi nút được nhấn , đây chỉ là **event flag** , không mang nhiều thông tin
-- Trong thực tế có thể gửi : ID của sensor , state của button ,...
+  
+   **uint8_t msg = 1;** -> giá trị được gửi vào queue khi nút được nhấn , đây chỉ là **event flag** , không mang nhiều thông tin
+  
+    Trong thực tế có thể gửi : ID của sensor , state của button ,...
 
 - **uint8_t prev = 1;** 
 - Vì input PA1 được cấu hình pull-up, trạng thái bình thường = 1
-- Khi bấm nút → kéo xuống GND → thành 0 
--> prev giúp ta phát hiện sườn thay vì đọc liên tục → tránh trigger nhiều lần.
+- Khi bấm nút → kéo xuống GND → thành 0
+  
+  -> prev giúp ta phát hiện sườn thay vì đọc liên tục → tránh trigger nhiều lần
+  
 ```c
 const TickType_t debounce = pdMS_TO_TICKS(50);
 ```
@@ -122,7 +126,7 @@ static void Task_Button(void *pvParameters)
     }
 }
 ```
-- Ví dụ xử lý trong Task_Button_UART 
+ - Ví dụ xử lý trong Task_Button_UART 
 
 ```c
 static void Task_Button_UART(void *pvParameters)
