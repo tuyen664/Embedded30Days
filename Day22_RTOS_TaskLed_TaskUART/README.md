@@ -244,7 +244,7 @@ for(;;)
 -> Muốn timing cực chính xác → cần task priority cao hoặc dùng hardware timer + ISR
 
 **3. UART polling chiếm CPU**
-- Khi TXE chưa xong → cả task đứng chờ → không làm gì khác.
+- Khi TXE chưa xong → cả task đứng chờ → không làm gì khác
   
 **4. Stack của Task cực quan trọng**
 - Task_LED stack = 128 words
@@ -279,9 +279,9 @@ for(;;)
 - Tick ngắn (1ms) → task delay 5ms gần như chính xác
 - Tick dài (10ms) → task delay 5ms → thực tế delay = 10ms, task khác bị chậm → project real-time bị ảnh hưởng
 
- **Priority inversion** xảy ra khi task có priority cao bị block bởi task priority thấp vì task thấp đang giữ resource chung (ví dụ mutex).
+ **Priority inversion** xảy ra khi task có priority cao bị block bởi task priority thấp vì task thấp đang giữ resource chung (ví dụ mutex)
 - Priority Inheritance giải pháp : Khi một task cao priority bị block vì task thấp priority đang giữ mutex, task thấp sẽ tạm thời được “thừa hưởng” priority của      task cao
-- Điều này giúp task thấp hoàn thành nhanh công việc và trả mutex, task cao sẽ chạy tiếp sớm hơn.
+- Điều này giúp task thấp hoàn thành nhanh công việc và trả mutex, task cao sẽ chạy tiếp sớm hơn
 
 
 ## Video
