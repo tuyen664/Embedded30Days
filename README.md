@@ -16,9 +16,9 @@
 - Ngày 20      : SPI
 - Ngày 23-29   : FreeRTOS , Interrupt trong FreeRTOS ,...
 - Ngày 30      : CAN
-- Ngày 31- ... : Ôn tập
+- Ngày 31- ..  : Ôn tập
 
-   **Mỗi thư mục chứa:**
+ **Mỗi thư mục chứa:**
   
 - Source code
 - Kiến thức lý thuyết và giải thích từng dòng lệnh
