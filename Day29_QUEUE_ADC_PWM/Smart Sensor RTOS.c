@@ -200,7 +200,7 @@ static void ADC1_Config(void)
     // Sample time selection ->  239.5 ADC cycles
     ADC1->SMPR2 |= (0x7U << 0) | (0x7U << 3) | (0x7U << 6);
 	
-	  ADC1->CR2 |= (1U << 1);               // CONT mode
+    ADC1->CR2 |= (1U << 1);               // CONT mode
 
     // ADC calibration
     ADC1->CR2 |= (1U << 0); // ADON first time
@@ -218,7 +218,7 @@ static void TIM4_PWM_Init(void)
     RCC->APB2ENR |= (1U << 3); // GPIOB clock enable
     RCC->APB1ENR |= (1U << 2); // TIM4 clock enable
 	
-	  RCC->APB2ENR |= (1U << 0); // Enable AFIO clock
+    RCC->APB2ENR |= (1U << 0); // Enable AFIO clock
 
     // Configure PB9 -TIM4_CH4 (AF Push-Pull)
     GPIOB->CRH &= ~(0xFU << 4);
@@ -234,17 +234,17 @@ static void TIM4_PWM_Init(void)
     TIM4->CCER  = (1U << 12);              // Enable output on CH4
     TIM4->CR1   = (1U << 7) | (1U << 0);   // ARPE + Counter enable
 		
-		TIM4->EGR |= 1; // Generate update event
-		delay_ms(20);
+	TIM4->EGR |= 1; // Generate update event
+	delay_ms(20);
 }
 
 static uint16_t readADC(uint8_t channel)
 {
-	  ADC1->SQR3 = channel;          // chon channel
-	  ADC1->CR2 |= (1U << 22);       // SWSTART: start convert
+	ADC1->SQR3 = channel;          // chon channel
+    ADC1->CR2 |= (1U << 22);       // SWSTART: start convert
     while (!(ADC1->SR & (1U << 1)));
 	
-	  ADC1->SR &= ~(1U << 1);          // xóa EOC (truong hop ADC liên tuc)
+	ADC1->SR &= ~(1U << 1);          // xÃ³a EOC (truong hop ADC liÃªn tuc)
     return ADC1->DR;
 }
 
