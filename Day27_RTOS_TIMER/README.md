@@ -3,11 +3,11 @@
 ## Tổng Quan
 - FreeRTOS Software Timer là timer chạy trong Task Timer Daemon của FreeRTOS, không chạy trong ISR, không dùng hardware timer của MCU.
 - Chạy trong timer service task (priority mặc định = configTIMER_TASK_PRIORITY)
-- Chạy không blocking và không nên làm việc nặng (vì tất cả timer share chung 1 task)
+- Chạy không blocking và không được làm việc nặng (vì tất cả timer share chung 1 task)
 - Thời gian kích hoạt dựa trên tick interrupt → độ chính xác phụ thuộc tick rate
 
 
-## Tạo 3 timer software
+## Tạo 3 Timer software
 ```c
 xTimer_LED  = xTimerCreate("LED_Timer",  pdMS_TO_TICKS(1000), pdTRUE,  0, vTimerCallback_LED);
 xTimer_UART = xTimerCreate("UART_Timer", pdMS_TO_TICKS(1000), pdTRUE,  0, vTimerCallback_UART);
@@ -15,7 +15,6 @@ xTimer_UART2 = xTimerCreate("UART2_Timer", pdMS_TO_TICKS(1000), pdTRUE,  0, vTim
 ```
 - pdTRUE : Auto-reload → lặp liên tục
 - 0 : ID (parameter) của timer → ta đang để NULL
-- Callback : Hàm sẽ được gọi khi timer hết hạn
 - pdMS_TO_TICKS(1000) : Sau mỗi 1s gọi hàm **vTimerCallback** 
 - "LED_Timer" : Tên timer, dùng để debug
 
@@ -36,7 +35,7 @@ static void vTimerCallback_LED(TimerHandle_t xTimer)
     LED_TOGGLE();
 }
 ```
-- Mỗi 1 giây → đảo trạng thái LED.
+- Mỗi 1 giây → đảo trạng thái LED
   
 **2. vTimerCallback_UART()**
 ```c
@@ -56,7 +55,7 @@ static void vTimerCallback_UART2(TimerHandle_t xTimer)
 ```
 - Cứ mỗi giây → in thêm một chuỗi
 
--> Như vậy mỗi giây UART1 in 2 dòng
+  -> Như vậy mỗi giây UART1 in 2 dòng
 
 ## Các lưu ý quan trọng
 
@@ -67,8 +66,8 @@ static void vTimerCallback_UART2(TimerHandle_t xTimer)
 **2. Tất cả timer share cùng 1 task!**
 - Ta có 3 timer → nhưng thực tế chỉ 1 task duy nhất xử lý chúng
 - Nếu 1 callback chạy lâu → 2 callback còn lại bị delay
-- Vì vậy : Không được gửi message lớn , Không được xử lý tính toán nặng ,Không được delay (vTaskDelay)
-- Callback phải ngắn và gọn.
+- Vì vậy : Không được gửi message lớn , Không được xử lý tính toán nặng , Không được delay (vTaskDelay)
+- Callback phải ngắn và gọn
 
 **3. in UART trong callback = KHÔNG AN TOÀN nếu tốc độ baud thấp**
 - UART ở 9600 baud → tốc độ gửi rất chậm
@@ -82,14 +81,14 @@ static void vTimerCallback_UART2(TimerHandle_t xTimer)
 - Vì ta sẽ block luôn **timer service task**, làm toàn bộ timer chết theo
 
 **5. Ta đang dùng parameter = 0 (NULL)**
-- xTimerCreate(... , 0 , ...); → nghĩa là ta không truyền ID cho timer.
+- xTimerCreate(... , 0 , ...); → nghĩa là ta không truyền ID cho timer
 - Trong project thật : Timer thường được dùng để quản lý nhiều object → ID cực kỳ quan trọng
   
 **6. UART gửi trong callback = không tốt**
 - Cách đúng :  Callback chỉ gửi 1 message vào queue UART -> Task UART gửi thật
   
 **7. Nguyên tắc: 1 peripheral = 1 task xử lý**
-- Ta đang viết thẳng vào USART1->DR trong callback timer → đây là race-condition nếu có nhiều task cùng gửi UART.
+- Ta đang viết thẳng vào USART1->DR trong callback timer → đây là race-condition nếu có nhiều task cùng gửi UART
 - cách chuẩn : Một task UART duy nhất -> gộp cả 2 uart vào 1
   
 **8. Timer sẽ bị trễ**
@@ -98,7 +97,7 @@ static void vTimerCallback_UART2(TimerHandle_t xTimer)
   
 **9. Timer callback chạy với priority của Timer Task**
 - Priority = configTIMER_TASK_PRIORITY
-- Nếu ta để priority rất cao → callback sẽ giật CPU của các task khác.
+- Nếu ta để priority rất cao → callback sẽ giật CPU của các task khác
 
 ## Các đoạn code bổ xung 
 
