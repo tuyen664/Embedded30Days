@@ -1,7 +1,7 @@
 ## Tổng Quan
 - Task_ADC_Read: đọc ADC từ PA0, trung bình 5 lần, gửi dữ liệu vào queue (xQueueADC)
 - Task_PWM_Control: nhận dữ liệu từ queue, tính duty cycle, điều khiển PWM trên PB9, đồng thời in giá trị duty qua UART với mutex bảo vệ
-- Task_UART_Command: định kỳ in trạng thái “ADC active” qua UART.
+- Task_UART_Command: định kỳ in trạng thái “ADC active” qua UART
 - Timer Monitor: nhấp nháy LED PC13 và gửi message [SYS] Alive mỗi 3 giây
 
 ## Giải thích các phần quan trọng 
@@ -42,5 +42,5 @@ if (xQueueReceive(xQueueADC, &adc_recv, portMAX_DELAY) == pdPASS)
 - Nhận ADC từ xQueueADC , chuyển sang duty PWM 0–1000
 - Mutex UART để in duty value an toàn
 
-## Ảnh chụp 
+## Ảnh chụp
 
