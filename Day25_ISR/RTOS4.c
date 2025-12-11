@@ -1,9 +1,4 @@
-/**
- ******************************************************************************
- * @file    : main.c
- * @brief   : FreeRTOS Demo – UART + LED + ADC + TIM2 ISR via Semaphore
- ******************************************************************************
- */
+/*  FreeRTOS Demo â€“ UART + LED + ADC + TIM2 ISR via Semaphore */
 
 #include "stm32f10x.h"
 #include "FreeRTOS.h"
