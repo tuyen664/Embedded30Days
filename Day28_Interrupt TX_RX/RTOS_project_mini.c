@@ -1,10 +1,7 @@
-/**
- ******************************************************************************
- * @file    : main.c
- * @brief   : FreeRTOS UART Command + Timer Monitor Demo (TX+RX Interrupt OK)
- * @details : Register-level, No HAL – UART RX/TX via Interrupt
- ******************************************************************************
- */
+/*
+  @brief   : FreeRTOS UART Command + Timer Monitor Demo (TX+RX Interrupt)
+  @details : Register-level, No HAL â€“ UART RX/TX via Interrupt
+*/
 
 #include "stm32f10x.h"
 #include "FreeRTOS.h"
