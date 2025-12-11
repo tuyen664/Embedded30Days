@@ -43,14 +43,14 @@ int main(void)
     /* Create timers */
     xTimer_LED  = xTimerCreate("LED_Timer",  pdMS_TO_TICKS(1000), pdTRUE,  0, vTimerCallback_LED);
     xTimer_UART = xTimerCreate("UART_Timer", pdMS_TO_TICKS(1000), pdTRUE,  0, vTimerCallback_UART);
-	  xTimer_UART2 = xTimerCreate("UART2_Timer", pdMS_TO_TICKS(1000), pdTRUE,  0, vTimerCallback_UART2);
+	xTimer_UART2 = xTimerCreate("UART2_Timer", pdMS_TO_TICKS(1000), pdTRUE,  0, vTimerCallback_UART2);
 
 
     if (xTimer_LED != NULL && xTimer_UART != NULL && xTimer_UART2 != NULL)
     {
         xTimerStart(xTimer_LED, 0);
         xTimerStart(xTimer_UART, 0);
-			  xTimerStart(xTimer_UART2, 0);
+		xTimerStart(xTimer_UART2, 0);
     }
     else
     {
@@ -117,7 +117,7 @@ static void UART1_SendString(const char *s)
 /* ================== TIMER CALLBACKS ================== */
 static void vTimerCallback_LED(TimerHandle_t xTimer)
 {   
-	  (void)xTimer;
+	(void)xTimer;
     LED_TOGGLE();
 }
 
