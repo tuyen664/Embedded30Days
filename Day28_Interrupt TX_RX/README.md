@@ -3,8 +3,8 @@
 - UART TX/RX bằng interrupt (không dùng HAL)
 - Queue để truyền dữ liệu giữa ISR ↔ task
 - Timer để gửi message
-- Task để nhận lệnh UART (command)
-- Task điều khiển LED theo command
+- 1 Task để nhận lệnh UART (command)
+- 1 Task điều khiển LED theo command
   
  **ISR (RX) → Queue → Task_UART_Receiver → Queue → Task_LED_Control → LED**                                     
 
@@ -24,7 +24,7 @@ NVIC_EnableIRQ(USART1_IRQn);
 ```
 - USART_CR1_RXNEIE  : Bật interrupt nhận dữ liệu
 - USART1->CR1 &= ~USART_CR1_TXEIE; -> Tắt TXE interrupt ban đầu
-- Vì TXE interrupt chạy khi thanh ghi gửi trống. Nếu bật ngay từ đầu mà không có gì để gửi → nó spam interrupt liên tục.
+- Vì TXE interrupt chạy khi thanh ghi gửi trống. Nếu bật ngay từ đầu mà không có gì để gửi → nó spam interrupt liên tục
 
 - Ta chỉ bật TXEIE khi có dữ liệu cần truyền (trong hàm queue ISR TX)
 
@@ -36,7 +36,8 @@ NVIC_EnableIRQ(USART1_IRQn);
   
 **2. TXE interrupt nguy hiểm nếu bật sai thời điểm**
 - Nếu bật TXEIE khi TX buffer rỗng → CPU bị spam interrupt → treo hệ thống
--> bật TXEIE chỉ khi có dữ liệu để gửi  
+  
+ -> bật TXEIE chỉ khi có dữ liệu để gửi  
 
 ## UART1_SendChar_IT()
 ```C
@@ -63,16 +64,19 @@ void UART1_SendChar_IT(char c)
 }
 ```
 - Hàm này gửi **1 ký tự** qua UART ở chế độ interrupt
-- Cách hoạt động : 
-- Nếu UART đang rảnh → ghi thẳng vào thanh ghi DR để gửi ngay
-- Nếu UART đang bận → đưa ký tự vào queue (hàng đợi) để ISR gửi dần
-- ISR TX sẽ tự động gửi các ký tự còn lại trong queue mỗi lần TXE interrupt xảy ra.
+- Cách hoạt động :
+  
+   Nếu UART đang rảnh → ghi thẳng vào thanh ghi DR để gửi ngay
+
+   Nếu UART đang bận → đưa ký tự vào queue (hàng đợi) để ISR gửi dần
+
+   ISR TX sẽ tự động gửi các ký tự còn lại trong queue mỗi lần TXE interrupt xảy ra
   
 **1. Check queue**
 ```c
 if (xQueueTxChar == NULL) return;
 ```
-→ Nếu queue chưa tạo → thoát để tránh crash.
+  → Nếu queue chưa tạo → thoát để tránh crash
 
 **2. taskENTER_CRITICAL()**
 
@@ -89,7 +93,9 @@ if ((USART1->SR & USART_SR_TXE) && !(USART1->CR1 & USART_CR1_TXEIE))
 ```
 - TXE = 1 → Thanh ghi truyền trống, UART đang rảnh
 - TXEIE = 0 → Interrupt chưa bật → chứng tỏ UART idle
--> Viết trực tiếp vào thanh ghi DR để gửi ngay kí tự đầu tiên 
+  
+  -> Viết trực tiếp vào thanh ghi DR để gửi ngay kí tự đầu tiên
+  
 - Bật TXE interrupt để ISR gửi ký tự tiếp theo từ queue
   
 **4. Nếu UART đang bận → đưa vào queue**
@@ -112,14 +118,17 @@ USART1->CR1 |= USART_CR1_TXEIE;
 
 - ISR mỗi lần TXE xảy ra sẽ : Lấy 1 ký tự từ queue ,  Ghi vào DR , Khi queue hết → tắt TXEIE để dừng interrupt
 
-- Interrupt TX chỉ xảy ra khi TXE chuyển từ 0 → 1 trong lúc TXEIE = 1 (tức là phỉa gửi tay thủ công kí tự đầu tiên để tạo cạnh 0-> 1) (từ "có dữ liệu" → "trống")
+- Interrupt TX chỉ xảy ra khi TXE chuyển từ 0 → 1 trong lúc TXEIE = 1 (tức là phải gửi tay thủ công kí tự đầu tiên để tạo cạnh 0-> 1) (từ "có dữ liệu" → "trống")
 
 ## USART1_IRQHandler()
 
-- Mục đích của ISR này : 
-- Nhận dữ liệu UART (RX) và gửi vào queue cho task xử lý
-- Lấy dữ liệu từ queue và gửi UART từng byte (TX)
-- Nếu có task ưu tiên cao hơn đang chờ, ISR sẽ kích hoạt **context switch** ngay sau khi thoát interrupt.
+- Mục đích của ISR này :
+  
+   Nhận dữ liệu UART (RX) và gửi vào queue cho task xử lý
+  
+   Lấy dữ liệu từ queue và gửi UART từng byte (TX)
+  
+   Nếu có task ưu tiên cao hơn đang chờ, ISR sẽ kích hoạt **context switch** ngay sau khi thoát interrupt
   
 **1. Khởi tạo biến để kiểm tra có cần switch context không**
 ```c
@@ -136,8 +145,8 @@ if (USART1->SR & USART_SR_RXNE)
     xQueueSendFromISR(xQueueRxChar, &c, &xHigherPriorityTaskWoken);
 }
 ```
-- RXNE =1: nghĩa là 1 byte mới đã được nhận và nằm trong DR -> kích hoạt ngắt
-- Đọc DR sẽ tự động CLEAR cờ RXNE.
+- RXNE = 1: nghĩa là 1 byte mới đã được nhận và nằm trong DR -> kích hoạt ngắt
+- Đọc DR sẽ tự động CLEAR cờ RXNE
 - Chuyển kí tự sang chữ in hoa
 - Gửi vào queue cho task xử lý
 - Không bao giờ delay trong ISR
@@ -159,9 +168,12 @@ if ((USART1->SR & USART_SR_TXE) && (USART1->CR1 & USART_CR1_TXEIE))
 }
 ```
 - check : TXE =1 , TXEIE =1 (UART đang rảnh và cho phép TX interrupt chạy)
-- Nhận 1 byte từ queue TX: 
-- Thành công → ghi vào DR để gửi 
-- Queue trống → TẮT TXEIE để không bị spam ngắt (TXE interrupt chạy liên tục khi TX queue trống)
+- Nhận 1 byte từ queue TX:
+  
+   Thành công → ghi vào DR để gửi
+  
+   Queue trống → TẮT TXEIE để không bị spam ngắt (TXE interrupt chạy liên tục khi TX queue trống)
+  
 - Quy trình truyền data : push byte đầu → enable TXEIE → ISR tự lo gửi tiếp
 - khi ta ghi USART1->DR = c; -> c được copy từ DR → Shift Register ngay lập tức (hardware làm)
 - DR trống lại ngay sau khi shift register nhận xong → sẵn sàng nhận byte tiếp theo
@@ -195,7 +207,8 @@ char c;
 - idx: Vị trí đang ghi
 - c: Ký tự nhận từ queue
 - Vì sao buffer nằm bên trong task là an toàn?
-- Buffer nằm trong stack của task , Và chỉ task này được dùng buffer 
+  
+   Buffer nằm trong stack của task , Và chỉ task này được dùng buffer 
 
 **2. Vòng lặp task**
 ```c
@@ -219,8 +232,8 @@ if (idx == 0 && c != '\r' && c != '\n')
     xTimerStop(xTimerMonitor, 0);
 }
 ```
-- Ngay cả khi ta chưa gõ gì, ISR không push vào queue → task block → không thực thi.
-- Khi ta gõ một ký tự → c = ký tự gõ, ví dụ 'A' thì nó mới xem xét đến điều kiện này.
+- Ngay cả khi ta chưa gõ gì, ISR không push vào queue → task block → không thực thi
+- Khi ta gõ một ký tự → c = ký tự gõ, ví dụ 'A' thì nó mới xem xét đến điều kiện này
 - Khi người dùng bắt đầu gõ ký tự đầu tiên cho command mới : Ta stop timer monitor , Timer này sẽ được start lại khi command hoàn thành
 - Khi đang gõ chữ , có thể bị xen ngang bởi Timer
   
