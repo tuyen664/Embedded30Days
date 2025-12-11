@@ -1,9 +1,4 @@
-/**
- ******************************************************************************
- * @file    : main.c
- * @brief   : FreeRTOS Software Timer Demo (Register-level, No HAL)
- ******************************************************************************
- */
+/* FreeRTOS Software Timer Demo (Register-level, No HAL) */
 
 #include "stm32f10x.h"
 #include "FreeRTOS.h"
