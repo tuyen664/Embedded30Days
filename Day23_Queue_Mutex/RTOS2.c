@@ -1,9 +1,4 @@
-/**
- ******************************************************************************
- * @file    : main.c
- * @brief   : FreeRTOS Queue + Semaphore Demo (Register-level, no HAL)
- ******************************************************************************
- */
+/* FreeRTOS Queue + Semaphore Demo (Register-level, no HAL) */
 
 #include "stm32f10x.h"
 #include "FreeRTOS.h"
