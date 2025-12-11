@@ -1,9 +1,4 @@
-/**
- ******************************************************************************
- * @file    : main.c
- * @brief   : FreeRTOS Mutex Demo – Shared Resource Protection (UART)
- ******************************************************************************
- */
+/* FreeRTOS Mutex Demo – Shared Resource Protection (UART) */
 
 #include "stm32f10x.h"
 #include "FreeRTOS.h"
